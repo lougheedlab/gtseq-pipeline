@@ -3,7 +3,7 @@ import shutil
 import requests
 from pathlib import Path
 
-from .logger import logger
+from lougheed_gtseq.logger import logger
 
 __all__ = ["download_genome_if_needed"]
 
@@ -19,7 +19,7 @@ REFERENCE_GENOME_FILE_NAMES = {
 }
 
 
-def download_genome_if_needed(species: str, workdir: Path):
+def download_genome_if_needed(species: str, workdir: Path) -> Path:
     if species not in REFERENCE_GENOME_URLS:
         raise ValueError(f"Invalid species: {species}")
 
@@ -30,7 +30,7 @@ def download_genome_if_needed(species: str, workdir: Path):
 
     if genome_file.exists():  # TODO: validate checksum
         logger.info(f"Already have genome for species '{species}'")
-        return  # already have genome, so return early - nothing to do
+        return genome_file  # already have genome, so return early - nothing to do
 
     logger.info(f"Attempting to download genome for species '{species}'")
 
@@ -40,3 +40,4 @@ def download_genome_if_needed(species: str, workdir: Path):
             shutil.copyfileobj(r.raw, fh)
 
     logger.info(f"Finished downloading genome to path: {genome_file}")
+    return genome_file
