@@ -4,6 +4,7 @@ import requests
 from pathlib import Path
 
 from lougheed_gtseq.logger import logger
+from lougheed_gtseq.models import Params
 
 __all__ = ["download_genome_if_needed"]
 
@@ -19,11 +20,14 @@ REFERENCE_GENOME_FILE_NAMES = {
 }
 
 
-def download_genome_if_needed(species: str, workdir: Path) -> Path:
+def download_genome_if_needed(params: Params) -> Path:
+    species = params.species
+    work_dir = params.work_dir
+
     if species not in REFERENCE_GENOME_URLS:
         raise ValueError(f"Invalid species: {species}")
 
-    genomes_folder = workdir / "ref"
+    genomes_folder = work_dir / "ref"
     genomes_folder.mkdir(exist_ok=True)
 
     genome_file = genomes_folder / REFERENCE_GENOME_FILE_NAMES[species]

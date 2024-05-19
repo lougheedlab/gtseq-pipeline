@@ -1,7 +1,7 @@
 import csv
 from pathlib import Path
 
-from .models import Sample
+from lougheed_gtseq.models import Sample
 
 __all__ = ["load_samples"]
 
