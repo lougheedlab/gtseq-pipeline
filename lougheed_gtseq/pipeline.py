@@ -22,16 +22,16 @@ def run_pipeline(params: Params):
     samples = load_samples(params.samples)
 
     # 2. Re-generate FASTQ using bcl2fastq so that we get index sequences in read names
-    fastq_generate(params.run, run_work_dir)
+    fastq_dir = fastq_generate(params, run_work_dir)
 
     # 3. Split FASTQ by sample
-    fastq_split(samples)  # TODO
+    sample_fastqs = fastq_split(samples, fastq_dir)
 
     # 4. Download the reference genome, if needed
     ref_genome = download_genome_if_needed(params)
 
     # 5. Align sample FASTQs to the reference genome
-    fastq_align(params, samples)
+    sample_bams = fastq_align(params, run_work_dir, samples, sample_fastqs, ref_genome)
 
     # 6. Call alleles for the species panel and generate a VCF
-    call_alleles()  # TODO
+    call_alleles(params, samples, sample_bams)

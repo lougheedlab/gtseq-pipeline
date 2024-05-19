@@ -2,6 +2,7 @@ import re
 
 __all__ = [
     "I7_BARCODES",
+    "get_i7_barcode",
     "I5_BARCODES",
     "get_i5_barcode",
 ]
