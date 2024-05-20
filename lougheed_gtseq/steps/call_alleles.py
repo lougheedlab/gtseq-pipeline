@@ -1,7 +1,8 @@
+import shutil
 import subprocess
 from pathlib import Path
 
-from ..models import Params, Sample
+from ..models import Params
 
 __all__ = ["call_alleles"]
 
@@ -9,7 +10,6 @@ __all__ = ["call_alleles"]
 def call_alleles(
     params: Params,
     run_work_dir: Path,
-    samples: list[Sample],
     sample_bams: dict[str, Path],
     ref_genome: Path,
 ):
@@ -24,3 +24,42 @@ def call_alleles(
     with open(bam_list, "w") as fh:
         for f in sample_bams.values():
             fh.write(f"{f}\n")
+
+    pileup_p = subprocess.Popen(
+        (
+            "bcftools",
+            "mpileup",
+            "-f",
+            str(ref_genome),
+            "-T",
+            str(allele_file),
+            "--annotate",
+            "AD,DP",
+            "--bam-list",
+            str(bam_list),
+        ),
+        stdout=subprocess.PIPE,
+    )
+
+    vcf_name = params.vcf.name
+    vcf_run_out = run_work_dir / vcf_name
+
+    subprocess.check_call(
+        (
+            "bcftools",
+            "call",
+            "-mv",
+            "-C",
+            "alleles",
+            "-T",
+            str(allele_file),
+            "--format-fields",
+            "gq",
+            "-o",
+            str(vcf_run_out),
+        ),
+        stdin=pileup_p.stdout,
+    )
+
+    # Copy the VCF output from the run work directory to the final location
+    shutil.copy(vcf_run_out, params.vcf, follow_symlinks=True)

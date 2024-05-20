@@ -26,6 +26,7 @@ def main():
         "run", type=Path, help="Path to run input directory (from Illumina machine)"
     )
     parser.add_argument("samples", type=Path, help="Path to sample sheet.")
+    parser.add_argument("vcf", type=Path, help="VCF output file to generate.")
 
     args = parser.parse_args()
 
@@ -34,6 +35,7 @@ def main():
         work_dir=args.work_dir,
         run=args.run,
         samples=args.samples,
+        vcf=args.vcf,
         processes=args.processes,
     )
 

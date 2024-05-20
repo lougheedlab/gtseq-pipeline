@@ -34,4 +34,4 @@ def run_pipeline(params: Params):
     sample_bams = fastq_align(params, run_work_dir, samples, sample_fastqs, ref_genome)
 
     # 6. Call alleles for the species panel and generate a VCF
-    call_alleles(params, samples, sample_bams)
+    call_alleles(params, run_work_dir, sample_bams, ref_genome)

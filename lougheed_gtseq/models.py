@@ -5,11 +5,16 @@ __all__ = ["Params", "Sample"]
 
 
 class Params(BaseModel):
+    # Required input information
     species: str
     work_dir: Path
     run: Path
     samples: Path
 
+    # Output
+    vcf: Path
+
+    # Other parameters
     processes: int
 
 
