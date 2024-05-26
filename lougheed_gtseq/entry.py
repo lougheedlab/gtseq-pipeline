@@ -37,6 +37,7 @@ def main():
         type=str,
         help="Species/GTseq panel for the pipeline.",
         choices=("polar",),
+        required=True,
     )
     run_parser.add_argument(
         "--work-dir",
