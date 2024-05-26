@@ -12,7 +12,6 @@ sample_pattern = re.compile(r"./bam/GTSeq_\d{3}_[A-Z]\d{2}_PL_\d_([a-zA-Z0-9_\-]
 
 MIN_DP = 6
 MIN_GQ = 18
-N_SNPS = 322
 CALLED_PROPORTION = 0.5
 
 
@@ -24,8 +23,10 @@ def run_qc(vcf: Path, vcf_out: Path | None) -> None:
     for s in vf.header.samples:
         sample_id = sample_pattern.match(s).group(1)
 
-        if "control" not in sample_id:
+        if "control" not in sample_id.lower():
             sample_genotypes[sample_id] = []
+        else:
+            logger.info(f"Skipping control sample: {sample_id}")
 
     if vcf_out is None:
         out_name = str(vcf.stem) + f"_QC_minDP_{MIN_DP}_minGQ_{MIN_GQ}.vcf"
