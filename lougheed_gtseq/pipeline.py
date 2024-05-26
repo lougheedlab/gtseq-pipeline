@@ -7,6 +7,7 @@ from .steps.fastq_generate import fastq_generate
 from .steps.fastq_split import fastq_split
 from .steps.fastq_align import fastq_align
 from .steps.call_alleles import call_alleles
+from .steps.run_qc import run_qc
 
 __all__ = ["run_pipeline"]
 
@@ -35,3 +36,6 @@ def run_pipeline(params: Params):
 
     # 6. Call alleles for the species panel and generate a VCF
     call_alleles(params, run_work_dir, sample_bams, ref_genome)
+
+    # 7. Run quality control steps on the VCF and generate a second, derived, quality-controlled VCF
+    run_qc(params.vcf, None)  # infer second output filename from first output filename
