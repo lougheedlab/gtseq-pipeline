@@ -15,6 +15,7 @@ def cmd_pipeline(args):
         min_dp=args.min_dp,
         min_gq=args.min_gq,
         min_called_prop=args.min_called_prop,
+        het_sigma=args.het_sigma,
         drop_failed_samples=args.drop_failed,
         vcf=args.vcf,
         processes=args.processes,
@@ -24,12 +25,22 @@ def cmd_pipeline(args):
 
 
 def cmd_qc(args):
-    run_qc(Path.cwd(), args.vcf_in, args.vcf_out, args.min_dp, args.min_gq, args.min_called_prop, args.drop_failed)
+    run_qc(
+        Path.cwd(),
+        args.vcf_in,
+        args.vcf_out,
+        args.min_dp,
+        args.min_gq,
+        args.min_called_prop,
+        args.het_sigma,
+        args.drop_failed,
+    )
 
 
 QC_DEFAULT_MIN_DP: int = 6
 QC_DEFAULT_MIN_GQ: int = 18
 QC_DEFAULT_MIN_CALLED_PROP: float = 0.75
+QC_DEFAULT_HET_SIGMA: int = 2
 
 
 def _add_qc_args(subparser):
@@ -52,6 +63,12 @@ def _add_qc_args(subparser):
         help="Required minimum proportion of successfully-called loci to include a sample.",
     )
     subparser.add_argument(
+        "--het-sigma",
+        type=int,
+        default=QC_DEFAULT_HET_SIGMA,
+        help="Number of standard deviations from the mean heterozygosity allowable before a sample fails QC.",
+    )
+    subparser.add_argument(
         "--drop-failed",
         action="store_true",
         help="Whether to exclude samples which fail the QC threshold for loci called.",
@@ -64,9 +81,7 @@ def main():
 
     # Run parser -------------------------------------------------------------------------------------------------------
 
-    run_parser = subparsers.add_parser(
-        "run", help="Run the complete GTseq genotyping pipeline."
-    )
+    run_parser = subparsers.add_parser("run", help="Run the complete GTseq genotyping pipeline.")
     run_parser.add_argument(
         "--species",
         type=str,
@@ -81,12 +96,8 @@ def main():
         default=Path.cwd(),
         help="Working directory for reference genomes, alignments, etc.",
     )
-    run_parser.add_argument(
-        "--processes", "-p", type=int, help="Number of processes to use.", default=2
-    )
-    run_parser.add_argument(
-        "run", type=Path, help="Path to run input directory (from Illumina machine)"
-    )
+    run_parser.add_argument("--processes", "-p", type=int, help="Number of processes to use.", default=2)
+    run_parser.add_argument("run", type=Path, help="Path to run input directory (from Illumina machine)")
     run_parser.add_argument("samples", type=Path, help="Path to sample sheet.")
     run_parser.add_argument("vcf", type=Path, help="VCF output file to generate.")
 

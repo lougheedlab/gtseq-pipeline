@@ -45,5 +45,6 @@ def run_pipeline(params: Params):
         params.min_dp,
         params.min_gq,
         params.min_called_prop,
+        params.het_sigma,
         params.drop_failed_samples,
     )

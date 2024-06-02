@@ -15,6 +15,7 @@ class Params(BaseModel):
     min_dp: int
     min_gq: int
     min_called_prop: float
+    het_sigma: int
     drop_failed_samples: bool
 
     # Output
