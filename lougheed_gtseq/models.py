@@ -11,6 +11,12 @@ class Params(BaseModel):
     run: Path
     samples: Path
 
+    # QC parameters
+    min_dp: int
+    min_gq: int
+    min_called_prop: float
+    drop_failed_samples: bool
+
     # Output
     vcf: Path
 

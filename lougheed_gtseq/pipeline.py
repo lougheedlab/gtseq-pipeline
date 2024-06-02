@@ -38,4 +38,12 @@ def run_pipeline(params: Params):
     call_alleles(params, run_work_dir, sample_bams, ref_genome)
 
     # 7. Run quality control steps on the VCF and generate a second, derived, quality-controlled VCF
-    run_qc(params.vcf, None)  # infer second output filename from first output filename
+    run_qc(
+        params.work_dir,
+        params.vcf,
+        None,  # infer second output filename from first output filename
+        params.min_dp,
+        params.min_gq,
+        params.min_called_prop,
+        params.drop_failed_samples,
+    )

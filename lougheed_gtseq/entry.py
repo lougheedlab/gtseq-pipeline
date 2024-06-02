@@ -12,6 +12,10 @@ def cmd_pipeline(args):
         work_dir=args.work_dir,
         run=args.run,
         samples=args.samples,
+        min_dp=args.min_dp,
+        min_gq=args.min_gq,
+        min_called_prop=args.min_called_prop,
+        drop_failed_samples=args.drop_failed,
         vcf=args.vcf,
         processes=args.processes,
     )
@@ -20,7 +24,38 @@ def cmd_pipeline(args):
 
 
 def cmd_qc(args):
-    run_qc(args.vcf_in, args.vcf_out)
+    run_qc(Path.cwd(), args.vcf_in, args.vcf_out, args.min_dp, args.min_gq, args.min_called_prop, args.drop_failed)
+
+
+QC_DEFAULT_MIN_DP: int = 6
+QC_DEFAULT_MIN_GQ: int = 18
+QC_DEFAULT_MIN_CALLED_PROP: float = 0.75
+
+
+def _add_qc_args(subparser):
+    subparser.add_argument(
+        "--min-dp",
+        type=int,
+        default=QC_DEFAULT_MIN_DP,
+        help="Required minimum read depth for a sample call to pass QC.",
+    )
+    subparser.add_argument(
+        "--min-gq",
+        type=int,
+        default=QC_DEFAULT_MIN_GQ,
+        help="Required minimum PHRED genotype quality for a sample call to pass QC.",
+    )
+    subparser.add_argument(
+        "--min-called-prop",
+        type=float,
+        default=QC_DEFAULT_MIN_CALLED_PROP,
+        help="Required minimum proportion of successfully-called loci to include a sample.",
+    )
+    subparser.add_argument(
+        "--drop-failed",
+        action="store_true",
+        help="Whether to exclude samples which fail the QC threshold for loci called.",
+    )
 
 
 def main():
@@ -39,6 +74,7 @@ def main():
         choices=("polar",),
         required=True,
     )
+    _add_qc_args(run_parser)
     run_parser.add_argument(
         "--work-dir",
         type=Path,
@@ -69,6 +105,7 @@ def main():
         type=Path,
         help="The VCF output for the quality-controlled genotype data.",
     )
+    _add_qc_args(qc_parser)
     qc_parser.set_defaults(func=cmd_qc)
 
     # ------------------------------------------------------------------------------------------------------------------
