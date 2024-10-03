@@ -6,6 +6,9 @@ authors = ["David Lougheed <david.lougheed@gmail.com>"]
 license = "GPL-3.0-only"
 readme = "README.md"
 
+[tool.poetry.scripts]
+lougheed-gtseq = "lougheed_gtseq.entry:main"
+
 [tool.poetry.dependencies]
 python = "^3.10"
 pysam = "^0.22.1"
