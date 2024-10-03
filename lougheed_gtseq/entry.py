@@ -4,6 +4,7 @@ from pathlib import Path
 from .models import Params
 from .pipeline import run_pipeline
 from .steps.run_qc import run_qc
+from .snp_success import run_snp_success
 
 
 def cmd_pipeline(args):
@@ -35,6 +36,10 @@ def cmd_qc(args):
         args.het_sigma,
         args.drop_failed,
     )
+
+
+def cmd_snp_success(args):
+    run_snp_success(args.vcf)
 
 
 QC_DEFAULT_MIN_DP: int = 6
@@ -118,6 +123,12 @@ def main():
     )
     _add_qc_args(qc_parser)
     qc_parser.set_defaults(func=cmd_qc)
+
+    # ------------------------------------------------------------------------------------------------------------------
+
+    success_parser = subparsers.add_parser("snp-success", help="Calculate call success rates of SNPs in a VCF.")
+    success_parser.add_argument("vcf", type=Path, help="The VCF to calculate SNP success rates for.")
+    success_parser.set_defaults(func=cmd_snp_success)
 
     # ------------------------------------------------------------------------------------------------------------------
 
