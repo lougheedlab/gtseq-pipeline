@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from .logger import logger
 from .models import Params
 from .steps.load_samples import load_samples
 from .steps.download_ref import download_genome_if_needed
@@ -21,24 +22,30 @@ def run_pipeline(params: Params):
     run_work_dir.mkdir()
 
     # 1. Load samples from sample sheet
+    logger.info("Loading samples from sample sheet: %s", params.samples)
     samples = load_samples(params.samples)
 
     # 2. Re-generate FASTQ using bcl2fastq so that we get index sequences in read names
+    logger.info("Generating FASTQ with bcl2fastq")
     fastq_dir = fastq_generate(params, run_work_dir)
 
     # 3. Split FASTQ by sample
+    logger.info("Splitting FASTQ by sample")
     sample_fastqs = fastq_split(samples, fastq_dir)
 
     # 4. Download the reference genome, if needed
     ref_genome = download_genome_if_needed(params)
 
     # 5. Align sample FASTQs to the reference genome
+    logger.info("Aligning sample FASTQs to reference genome")
     sample_bams = fastq_align(params, run_work_dir, samples, sample_fastqs, ref_genome)
 
     # 6. Call alleles for the species panel and generate a VCF
+    logger.info("Calling sample SNPs and generating a batch VCF: %s", params.vcf)
     call_alleles(params, run_work_dir, sample_bams, ref_genome)
 
     # 7. Run quality control steps on the VCF and generate a second, derived, quality-controlled VCF
+    logger.info("Running quality control steps and generating a batch QCed VCF")
     run_qc(
         params.work_dir,
         params.vcf,
@@ -52,4 +59,5 @@ def run_pipeline(params: Params):
 
     # 8. (Optional) call sex-linked markers
     if params.call_sex:
+        logger.info("Calling sex-linked markers and generating CSV: %s", params.sex_calls)
         call_sex_markers(params, run_work_dir, sample_fastqs)
