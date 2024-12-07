@@ -32,7 +32,7 @@ def download_genome_if_needed(params: Params) -> Path:
 
     genome_file = genomes_folder / REFERENCE_GENOME_FILE_NAMES[species]
 
-    if genome_file.exists():  # TODO: validate checksum
+    if genome_file.exists():  # TODO: validate checksum and index
         logger.info(f"Already have genome for species '{species}'")
         return genome_file  # already have genome, so return early - nothing to do
 
@@ -44,6 +44,10 @@ def download_genome_if_needed(params: Params) -> Path:
             shutil.copyfileobj(r.raw, fh)
 
     logger.info(f"Finished downloading genome to path: {genome_file}")
+
+    logger.info(f"Re-compressing genome as bgzip: {genome_file}")
+    subprocess.check_call(("gunzip", str(genome_file)))
+    subprocess.check_call(("bgzip", str(genome_file).replace(".gz", "")))
 
     logger.info(f"Indexing downloaded genome: {genome_file}")
     subprocess.check_call(("bwa", "index", genome_file))
