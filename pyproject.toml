@@ -20,6 +20,7 @@ matplotlib = "^3.9.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.4.2"
+pytest = "^8.3.4"
 
 [build-system]
 requires = ["poetry-core"]
