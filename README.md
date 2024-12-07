@@ -1,5 +1,7 @@
 # Lougheed Lab GTseq Pipeline
 
+**WORK IN PROGRESS.**
+
 GTseq pipeline derived from work done by Peiwen Li, Kristen Hayward, and others, with
 portions inspired by the [GTseq pipeline by Nate Campbell](https://github.com/GTseq/GTseq-Pipeline).
 
