@@ -130,13 +130,13 @@ I5_BARCODES = {
 }
 
 
-r_i5_canonical = re.compile(r"^([A-H])([01]\d)$")  # first form: A01, A02, ...
+r_i5_canonical = re.compile(r"^([A-H])([01]?\d)$")  # first form: A01, A02, ...
 r_i5_alternate = re.compile(r"^(\d|1[0-2])([A-H])$")  # second form: 1A, 2A, ...
 
 
 def get_i5_barcode(coordinate: str):
-    if r_i5_canonical.match(coordinate):  # canonical form
-        return I5_BARCODES[coordinate]
+    if m := r_i5_canonical.match(coordinate):  # canonical form; maybe need to pad number with zeros
+        return I5_BARCODES[f"{m.group(1)}{m.group(2).zfill(2)}"]
     elif m := r_i5_alternate.match(coordinate):  # alternate form; need to transform
         return I5_BARCODES[f"{m.group(2)}{m.group(1).zfill(2)}"]
     else:
