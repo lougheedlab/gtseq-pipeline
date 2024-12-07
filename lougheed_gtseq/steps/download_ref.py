@@ -10,8 +10,8 @@ __all__ = ["download_genome_if_needed"]
 
 REFERENCE_GENOME_URLS = {
     "polar": (
-        "https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/687/225/GCA_000687225.1_UrsMar_1.0/"
-        "GCA_000687225.1_UrsMar_1.0_genomic.fna.gz"
+        "https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/687/225/GCF_000687225.1_UrsMar_1.0/"
+        "GCF_000687225.1_UrsMar_1.0_genomic.fna.gz"
     ),
 }
 
