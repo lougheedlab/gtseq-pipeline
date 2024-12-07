@@ -14,12 +14,13 @@ def load_samples(sample_csv: Path) -> list[Sample]:
 
         row: dict[str, str]
         for row in reader:
+            norm_row = {k.lower().replace(" ", "_"): v for k, v in row.items()}
             samples.append(
                 Sample(
-                    name=row["Sample_name"],
-                    plate=row["Plate_ID"],
-                    i7_name=row["i7_name"],
-                    i5_name=row["i5_name"],
+                    name=norm_row["sample_name"],
+                    plate=norm_row["plate_id"],
+                    i7_name=norm_row["i7_name"],
+                    i5_name=norm_row["i5_name"],
                 )
             )
 
