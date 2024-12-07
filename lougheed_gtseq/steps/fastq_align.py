@@ -14,6 +14,7 @@ def fastq_align(
     ref_genome: Path,
 ) -> dict[str, Path]:
     align = run_work_dir / "align"
+    align.mkdir(exist_ok=True)
 
     sample_bams: dict[str, Path] = {}
 
