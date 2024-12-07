@@ -47,7 +47,7 @@ def download_genome_if_needed(params: Params) -> Path:
 
     logger.info(f"Re-compressing genome as bgzip: {genome_file}")
     subprocess.check_call(("gunzip", str(genome_file)))
-    subprocess.check_call(("bgzip", str(genome_file).replace(".gz", "")))
+    subprocess.check_call(("bgzip", "-@", str(params.processes), str(genome_file).replace(".gz", "")))
 
     logger.info(f"Indexing downloaded genome: {genome_file}")
     subprocess.check_call(("bwa", "index", genome_file))
