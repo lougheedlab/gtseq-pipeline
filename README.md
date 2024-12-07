@@ -18,6 +18,20 @@ This software must be run on a machine running Linux.
 4. TODO
 
 
+## Usage
+
+### 1. Prepare a sample sheet
+
+It should have the following headers: `Sample_name`, `Plate_ID`, `i7_name`, `i5_name`.
+
+There must be exactly one entry for a sample; additional replicates should have a unique suffix (e.g., `-1`, `-2`) added
+to the end of the sample name.
+
+### 2. TODO
+
+TODO
+
+
 ## Copyright Notice
 
 Lougheed Lab GTseq pipeline. <br />
