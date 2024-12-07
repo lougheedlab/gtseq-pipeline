@@ -8,6 +8,7 @@ from .steps.fastq_split import fastq_split
 from .steps.fastq_align import fastq_align
 from .steps.call_alleles import call_alleles
 from .steps.run_qc import run_qc
+from .steps.call_sex_markers import call_sex_markers
 
 __all__ = ["run_pipeline"]
 
@@ -48,3 +49,7 @@ def run_pipeline(params: Params):
         params.het_sigma,
         params.drop_failed_samples,
     )
+
+    # 8. (Optional) call sex-linked markers
+    if params.call_sex:
+        call_sex_markers(params, run_work_dir, sample_fastqs)

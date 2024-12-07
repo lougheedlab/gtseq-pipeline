@@ -1,4 +1,6 @@
 import argparse
+import sys
+
 from pathlib import Path
 
 from .models import Params
@@ -8,17 +10,41 @@ from .snp_success import run_snp_success
 
 
 def cmd_pipeline(args):
+    call_sex = not args.no_sex_calls
+    gtseq_scripts_path: Path = args.gtseq_scripts
+    sex_calls: Path | None = args.sex_calls
+
+    if call_sex:
+        if sex_calls is None:
+            print(
+                "--sex-calls output CSV file for sex marker genotype output must be specified with --no-sex-calls is "
+                "not set.",
+                file=sys.stderr,
+            )
+            exit(1)
+
+        if not gtseq_scripts_path.exists():
+            print(
+                "--gtseq-scripts must point to a directory containing the contents of the "
+                "https://github.com/GTseq/GTseq-Pipeline/ repository.",
+                file=sys.stderr,
+            )
+            exit(1)
+
     params = Params(
         species=args.species,
         work_dir=args.work_dir,
         run=args.run,
         samples=args.samples,
+        call_sex=call_sex,
+        gtseq_scripts=args.gtseq_scripts,
         min_dp=args.min_dp,
         min_gq=args.min_gq,
         min_called_prop=args.min_called_prop,
         het_sigma=args.het_sigma,
         drop_failed_samples=args.drop_failed,
         vcf=args.vcf,
+        sex_calls=args.sex_calls,
         processes=args.processes,
     )
 
@@ -101,10 +127,22 @@ def main():
         default=Path.cwd(),
         help="Working directory for reference genomes, alignments, etc.",
     )
+    run_parser.add_argument(
+        "--gtseq-scripts",
+        type=Path,
+        default=Path.cwd() / "GTseq-Pipeline",
+        help="Directory holding GTseq pipeline scripts from Campbell et al.",
+    )
+    run_parser.add_argument(
+        "--no-sex-calls",
+        action="store_true",
+        help="Turns off the sex marker calling part of the pipeline.",
+    )
     run_parser.add_argument("--processes", "-p", type=int, help="Number of processes to use.", default=2)
     run_parser.add_argument("run", type=Path, help="Path to run input directory (from Illumina machine)")
     run_parser.add_argument("samples", type=Path, help="Path to sample sheet.")
     run_parser.add_argument("vcf", type=Path, help="VCF output file to generate.")
+    run_parser.add_argument("--sex-calls", type=Path, help="Output file for sex calls CSV.")
 
     run_parser.set_defaults(func=cmd_pipeline)
 

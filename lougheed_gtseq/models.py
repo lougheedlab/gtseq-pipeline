@@ -4,7 +4,14 @@ from pydantic import BaseModel
 __all__ = ["Params", "Sample"]
 
 
-class Params(BaseModel):
+class SexCallingParams(BaseModel):
+    # Sex-linked marker calling parameters
+    call_sex: bool
+    gtseq_scripts: Path
+    sex_calls: Path
+
+
+class Params(SexCallingParams):
     # Required input information
     species: str
     work_dir: Path
@@ -20,6 +27,7 @@ class Params(BaseModel):
 
     # Output
     vcf: Path
+    sex_calls: Path | None  # override to make optional
 
     # Other parameters
     processes: int
