@@ -1,6 +1,6 @@
-import shutil
-
 import requests
+import shutil
+import subprocess
 from pathlib import Path
 
 from lougheed_gtseq.logger import logger
@@ -44,4 +44,8 @@ def download_genome_if_needed(params: Params) -> Path:
             shutil.copyfileobj(r.raw, fh)
 
     logger.info(f"Finished downloading genome to path: {genome_file}")
+
+    logger.info(f"Indexing downloaded genome: {genome_file}")
+    subprocess.check_call(("bwa", "index", genome_file))
+
     return genome_file
