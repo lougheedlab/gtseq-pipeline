@@ -5,6 +5,10 @@ description = "GTseq pipeline for the Lougheed Lab."
 authors = ["David Lougheed <david.lougheed@gmail.com>"]
 license = "GPL-3.0-only"
 readme = "README.md"
+packages = [{ include = "lougheed_gtseq" }]
+include = [
+    "lougheed_gtseq/alleles/*.csv",
+]
 
 [tool.poetry.scripts]
 lougheed-gtseq = "lougheed_gtseq.entry:main"
