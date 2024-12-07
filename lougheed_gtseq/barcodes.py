@@ -21,10 +21,13 @@ i7_barcode_numeral_pattern = re.compile(r"(0[0-1][1-6])")
 
 
 def get_i7_barcode(val: str) -> str:
-    m = i7_barcode_numeral_pattern.match(val)
+    m = i7_barcode_numeral_pattern.search(val)
     if not m:
         raise ValueError(f"Could not extract i7 barcode numeral from value: '{val}'")
-    return m.group(1)
+    barcode_num = m.group(1)
+    if barcode_num not in I7_BARCODES:
+        raise ValueError(f"Barcode with numeral {barcode_num} not found in set: {set(I7_BARCODES.keys())}")
+    return I7_BARCODES[barcode_num]
 
 
 I5_BARCODES = {
