@@ -8,6 +8,7 @@ readme = "README.md"
 packages = [{ include = "lougheed_gtseq" }]
 include = [
     "lougheed_gtseq/alleles/*.csv",
+    "lougheed_gtseq/alleles/*.tsv",
 ]
 
 [tool.poetry.scripts]
