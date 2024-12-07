@@ -1,9 +1,12 @@
+import functools
 import re
 
 __all__ = [
     "I7_BARCODES",
+    "get_i7_barcode_numeral",
     "get_i7_barcode",
     "I5_BARCODES",
+    "normalize_i5_coordinate",
     "get_i5_barcode",
 ]
 
@@ -20,11 +23,17 @@ I7_BARCODES = {
 i7_barcode_numeral_pattern = re.compile(r"(0[0-1][1-6])")
 
 
-def get_i7_barcode(val: str) -> str:
+@functools.cache
+def get_i7_barcode_numeral(val: str) -> str:
     m = i7_barcode_numeral_pattern.search(val)
     if not m:
         raise ValueError(f"Could not extract i7 barcode numeral from value: '{val}'")
-    barcode_num = m.group(1)
+    return m.group(1)
+
+
+@functools.cache
+def get_i7_barcode(val: str) -> str:
+    barcode_num = get_i7_barcode_numeral(val)
     if barcode_num not in I7_BARCODES:
         raise ValueError(f"Barcode with numeral {barcode_num} not found in set: {set(I7_BARCODES.keys())}")
     return I7_BARCODES[barcode_num]
@@ -134,10 +143,16 @@ r_i5_canonical = re.compile(r"^([A-H])([01]?\d)$")  # first form: A01, A02, ...
 r_i5_alternate = re.compile(r"^(\d|1[0-2])([A-H])$")  # second form: 1A, 2A, ...
 
 
-def get_i5_barcode(coordinate: str):
+@functools.cache
+def normalize_i5_coordinate(coordinate: str):
     if m := r_i5_canonical.match(coordinate):  # canonical form; maybe need to pad number with zeros
-        return I5_BARCODES[f"{m.group(1)}{m.group(2).zfill(2)}"]
+        return f"{m.group(1)}{m.group(2).zfill(2)}"
     elif m := r_i5_alternate.match(coordinate):  # alternate form; need to transform
-        return I5_BARCODES[f"{m.group(2)}{m.group(1).zfill(2)}"]
+        return f"{m.group(2)}{m.group(1).zfill(2)}"
     else:
         raise ValueError("Invalid coordinate for Lougheed GTseq panel")
+
+
+@functools.cache
+def get_i5_barcode(coordinate: str):
+    return I5_BARCODES[normalize_i5_coordinate(coordinate)]

@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 from typing import TextIO
 
-from ..barcodes import get_i7_barcode, get_i5_barcode
+from ..barcodes import get_i7_barcode_numeral, get_i7_barcode, normalize_i5_coordinate, get_i5_barcode
 from ..logger import logger
 from ..models import Sample
 
@@ -41,14 +41,16 @@ def fastq_split(samples: list[Sample], fastq_dir: Path):
                     continue
 
                 if read_index not in index_seqs_lookup:
-                    logger.warn(f"Could not find read index {read_index} in lookup table; skipping read")
+                    logger.debug(f"Could not find read index {read_index} in lookup table; skipping read")
                     continue
 
                 s = index_seqs_lookup[read_index]
                 sn = s.name
 
                 if sn not in sample_files:
-                    new_sample_file = split_dir / f"GTSeq_{s.i7_name}_{s.i5_name}_{s.plate}_{s.name}.fastq"
+                    i7 = get_i7_barcode_numeral(s.i7_name)
+                    i5 = normalize_i5_coordinate(s.i5_name)
+                    new_sample_file = split_dir / f"GTSeq_{i7}_{i5}_{s.plate}_{s.name}.fastq"
                     sample_files[sn] = new_sample_file
                     sample_file_handles[sn] = open(new_sample_file, mode="w")
 
