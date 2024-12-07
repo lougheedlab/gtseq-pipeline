@@ -10,7 +10,7 @@ def fastq_generate(params: Params, run_work_dir: Path) -> Path:
     fastq_dir = run_work_dir / "fastq"
     fastq_dir.mkdir()
 
-    with open(fastq_dir / "bcl2fastq.stdout", "w") as fo, open(fastq_dir / "bcl2fastq.stderr") as fe:
+    with open(fastq_dir / "bcl2fastq.stdout", "w") as fo, open(fastq_dir / "bcl2fastq.stderr", "w") as fe:
         subprocess.check_call(
             (
                 "bcl2fastq",
