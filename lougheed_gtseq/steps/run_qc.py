@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import pysam
 import re
@@ -77,7 +78,8 @@ def run_qc(
 
     # -- Whole-sample QC -----------------------------------------------------------------------------------------------
 
-    failed_samples: dict[str, Literal["prop", "het"]] = {}  # dict of [sample ID, failure reason]
+    # dict of [sample ID, (failure reason, failed value)]
+    failed_samples: dict[str, tuple[Literal["prop_called", "heterozygosity"], float]] = {}
 
     sample_n_called: dict[str, int] = {}
     sample_p_called: dict[str, float] = {}
@@ -97,7 +99,7 @@ def run_qc(
         props.append(prop_called)
 
         if not prop_called >= min_prop:
-            failed_samples[ss] = "prop"
+            failed_samples[ss] = ("prop_called", prop_called)
 
     # QC step: heterozygosity
 
@@ -116,27 +118,50 @@ def run_qc(
 
     for ss, sg in filter(lambda x: x[0] not in failed_samples, sample_genotypes.items()):
         if not het_lb <= sample_het[ss] <= het_ub:  # 2 sigma of mean calculated pre-het-filtering
-            failed_samples[ss] = "het"
+            failed_samples[ss] = ("heterozygosity", sample_het[ss])
 
     # Calculate final set of successful samples:
     success_samples = [ss for ss in sample_genotypes.keys() if ss not in failed_samples]
 
+    # Save failed samples to text file
+    with open(f"{vcf_out}.failed-samples.csv", "w") as fh:
+        fh.write(f'"sample","failure reason","failure value"\n')
+        for fs, fr in failed_samples.items():
+            fh.write(f'"{fs}","{fr[0]}","{fr[1]}"\n')
+
     # QC plots:
 
-    logger.info(f"[QC] Proportion-called distribution (fail: <{min_prop * 100:.1f}%)")
+    prop_title = f"Proportion-called distribution (fail: <{min_prop * 100:.1f}%)"
+    logger.info(f"[QC] {prop_title}")
     prop_counts, prop_edges = np.histogram(props, bins=20)
     prop_fig = tpl.figure()
     prop_fig.hist(prop_counts, prop_edges, orientation="horizontal", force_ascii=False)
     prop_fig.show()
 
-    logger.info(
-        f"[QC] Heterozygosity distribution (before heterozygosity filtering; fail: <{het_lb:.3f} | >{het_ub:.3f})"
-    )
+    prop_fig_g = plt.figure()
+    plt.title(prop_title)
+    plt.stairs(prop_counts, prop_edges, fill=True)
+    plt.xlabel("proportion of SNPs called")
+    plt.ylabel("# samples")
+    plt.axvline(min_prop, color="#1111CC")
+    prop_fig_g.savefig(f"{vcf}.prop_called.png", dpi=220)
+
+    het_title = f"Heterozygosity distribution (before heterozygosity filtering; fail: <{het_lb:.3f} | >{het_ub:.3f})"
+    logger.info(f"[QC] {het_title}")
     logger.info(f"[QC]   Heterozygosity: mean={np.mean(het_props):.3f}; stdev={np.std(het_props):.3f}")
     het_counts, het_bin_edges = np.histogram(het_props, bins=25)
     het_fig = tpl.figure()
     het_fig.hist(het_counts, het_bin_edges, orientation="horizontal", force_ascii=False)
     het_fig.show()
+
+    het_fig_g = plt.figure(figsize=(8, 4))
+    plt.title(het_title)
+    plt.stairs(het_counts, het_bin_edges, fill=True)
+    plt.xlabel("proportion of SNPs that are heterozygous")
+    plt.ylabel("# samples")
+    plt.axvline(het_lb, color="#1111CC")
+    plt.axvline(het_ub, color="#CC1111")
+    het_fig_g.savefig(f"{vcf}.het.png", dpi=220)
 
     # Write final VCF and clean up:
 
