@@ -29,11 +29,11 @@ def fastq_split(samples: list[Sample], fastq_dir: Path):
     try:
         with pysam.FastxFile(str(fq_path)) as fq:
             for read in fq:
-                print(read.name)
-                print(read.comment)
-                read_index = read.name.split(":")[-1]
+                read_index = read.comment.split(":")[-1]
                 if not READ_INDEX_PATTERN.match(read_index):
-                    logger.debug(f"Could not find read index sequences in read {read.name}; skipping read")
+                    logger.debug(
+                        f"Could not find read index sequences in read {read.name} {read.comment}; skipping read"
+                    )
                     continue
 
                 if read_index not in index_seqs_lookup:
