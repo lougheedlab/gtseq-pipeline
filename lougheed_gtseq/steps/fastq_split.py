@@ -22,6 +22,10 @@ def fastq_split(samples: list[Sample], fastq_dir: Path):
 
     index_seqs_lookup = {f"{get_i7_barcode(s.i7_name)}+{get_i5_barcode(s.i5_name)}": s for s in samples}
 
+    logger.info(f"Using index lookup table for %d samples:", len(samples))
+    for s, idx in index_seqs_lookup.items():
+        logger.info(f"%s: %s", s.rjust(30), idx)
+
     sample_files: dict[str, Path] = {}
     sample_file_handles: dict[str, TextIO] = {}
 
