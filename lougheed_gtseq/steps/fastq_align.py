@@ -42,8 +42,8 @@ def fastq_align(
 
         with open(sorted_bam, "wb") as fh:
             subprocess.check_call(
-                ("samtools", "sort", "-@", str(params.processes)),
-                stdin=bam_p.stdin,
+                ("samtools", "sort", "-@", str(params.processes), "-"),
+                stdin=bam_p.stdout,
                 stdout=fh,
             )
 
