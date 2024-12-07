@@ -138,7 +138,7 @@ def main():
         action="store_true",
         help="Turns off the sex marker calling part of the pipeline.",
     )
-    run_parser.add_argument("--processes", "-p", type=int, help="Number of processes to use.", default=2)
+    run_parser.add_argument("--processes", "-p", type=int, help="Number of processes to use.", default=4)
     run_parser.add_argument("run", type=Path, help="Path to run input directory (from Illumina machine)")
     run_parser.add_argument("samples", type=Path, help="Path to sample sheet.")
     run_parser.add_argument("vcf", type=Path, help="VCF output file to generate.")
