@@ -1,7 +1,7 @@
 from pathlib import Path
 from pydantic import BaseModel
 
-__all__ = ["Params", "Sample"]
+__all__ = ["SexCallingParams", "Params", "Sample"]
 
 
 class SexCallingParams(BaseModel):

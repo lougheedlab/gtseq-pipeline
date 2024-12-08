@@ -2,7 +2,7 @@ import os
 import subprocess
 from pathlib import Path
 
-from ..models import SexCallingParams
+from ..models import SexCallingParams, Sample
 
 __all__ = ["call_sex_markers"]
 
@@ -11,7 +11,9 @@ GENOTYPER = "GTseq_Genotyper_v3.pl"
 GENO_COMPILE = "GTseq_GenoCompile_v3.pl"
 
 
-def call_sex_markers(params: SexCallingParams, run_work_dir: Path, sample_fastqs: dict[str, Path]):
+def call_sex_markers(
+    params: SexCallingParams, run_work_dir: Path, samples: list[Sample], sample_fastqs: dict[int, Path]
+):
     # Ensure we have a sex-linked marker file, which should be in the Campbell format;
     # see https://github.com/GTseq/GTseq-Pipeline/blob/master/GTseq_Genotyper_v3.pl
     marker_file = Path(__file__).parent.parent / "alleles" / f"{params.species}.sl.csv"
@@ -34,9 +36,10 @@ def call_sex_markers(params: SexCallingParams, run_work_dir: Path, sample_fastqs
     genos_dir = out_dir / "genos"
 
     # For each sample, call sex-linked genotypes (Campbell et al. script)
-    for sample, fastq in sample_fastqs.items():
-        print(f"Calling sex-linked markers for {sample} ({fastq=})")
-        with open(genos_dir / f"{sample}.genos", "w") as fh:
+    for si, fastq in sample_fastqs.items():
+        sample = samples[si]
+        print(f"Calling sex-linked markers for {sample.name} ({fastq=})")
+        with open(genos_dir / f"{sample.plate}_{sample.name}.genos", "w") as fh:
             subprocess.check_call(("perl", str(genotyper), str(marker_file), str(fastq)), stdout=fh)
         print("    Done.")
 

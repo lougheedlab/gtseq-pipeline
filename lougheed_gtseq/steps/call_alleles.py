@@ -10,7 +10,7 @@ __all__ = ["call_alleles"]
 def call_alleles(
     params: Params,
     run_work_dir: Path,
-    sample_bams: dict[str, Path],
+    sample_bams: dict[int, Path],
     ref_genome: Path,
 ):
     allele_file = Path(__file__).parent.parent / "alleles" / f"{params.species}.tsv"

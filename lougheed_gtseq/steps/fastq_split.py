@@ -13,21 +13,24 @@ __all__ = ["fastq_split"]
 READ_INDEX_PATTERN = re.compile(r"^[ACGT]{6}\+[ACGT]{6}$")
 
 
-def fastq_split(samples: list[Sample], fastq_dir: Path):
+def fastq_split(samples: list[Sample], fastq_dir: Path) -> dict[int, Path]:
     fq_path = next(fastq_dir.glob("Undetermined_*_R1_*.fastq.gz"), None)
     assert fq_path is not None
 
     split_dir = fastq_dir / "split"
     split_dir.mkdir(exist_ok=True)
 
-    index_seqs_lookup = {f"{get_i7_barcode(s.i7_name)}+{get_i5_barcode(s.i5_name)}": s for s in samples}
+    index_seqs_lookup: dict[str, int] = {
+        f"{get_i7_barcode(s.i7_name)}+{get_i5_barcode(s.i5_name)}": i
+        for i, s in enumerate(samples)
+    }
 
     logger.info(f"Using index lookup table for %d samples:", len(samples))
     for s, idx in index_seqs_lookup.items():
-        logger.info(f"%s: %s", s.rjust(30), idx)
+        logger.info(f"%s: %d --> %s", s.rjust(30), idx, samples[idx])
 
-    sample_files: dict[str, Path] = {}
-    sample_file_handles: dict[str, TextIO] = {}
+    sample_files: dict[int, Path] = {}
+    sample_file_handles: dict[int, TextIO] = {}
 
     logger.info(f"Splitting reads from {fq_path}")
     try:
@@ -44,17 +47,17 @@ def fastq_split(samples: list[Sample], fastq_dir: Path):
                     logger.debug(f"Could not find read index {read_index} in lookup table; skipping read")
                     continue
 
-                s = index_seqs_lookup[read_index]
-                sn = s.name
+                si = index_seqs_lookup[read_index]
+                s = samples[si]
 
-                if sn not in sample_files:
+                if si not in sample_files:
                     i7 = get_i7_barcode_numeral(s.i7_name)
                     i5 = normalize_i5_coordinate(s.i5_name)
                     new_sample_file = split_dir / f"GTSeq_{i7}_{i5}_{s.plate}_{s.name}.fastq"
-                    sample_files[sn] = new_sample_file
-                    sample_file_handles[sn] = open(new_sample_file, mode="w")
+                    sample_files[si] = new_sample_file
+                    sample_file_handles[si] = open(new_sample_file, mode="w")
 
-                fh = sample_file_handles[sn]
+                fh = sample_file_handles[si]
                 fh.write(str(read) + "\n")
 
     finally:
