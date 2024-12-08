@@ -34,6 +34,7 @@ def call_sex_markers(
     # Create output directory
     out_dir = run_work_dir / "sex_linked"
     genos_dir = out_dir / "genos"
+    genos_dir.mkdir()
 
     # For each sample, call sex-linked genotypes (Campbell et al. script)
     for si, fastq in sample_fastqs.items():
