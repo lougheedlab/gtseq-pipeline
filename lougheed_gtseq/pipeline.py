@@ -60,4 +60,4 @@ def run_pipeline(params: Params):
     # 8. (Optional) call sex-linked markers
     if params.call_sex:
         logger.info("Calling sex-linked markers and generating CSV: %s", params.sex_calls)
-        call_sex_markers(params, run_work_dir, sample_fastqs)
+        call_sex_markers(params, run_work_dir, samples, sample_fastqs)
