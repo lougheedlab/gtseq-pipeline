@@ -35,6 +35,7 @@ def fastq_align(
                 str(fq),
             ),
             stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
         )
 
         bam_p = subprocess.Popen(
