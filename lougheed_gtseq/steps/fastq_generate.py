@@ -6,10 +6,7 @@ from ..models import Params
 __all__ = ["fastq_generate"]
 
 
-def fastq_generate(params: Params, run_work_dir: Path) -> Path:
-    fastq_dir = run_work_dir / "fastq"
-    fastq_dir.mkdir()
-
+def fastq_generate(params: Params, fastq_dir: Path) -> Path:
     with open(fastq_dir / "bcl2fastq.stdout", "w") as fo, open(fastq_dir / "bcl2fastq.stderr", "w") as fe:
         subprocess.check_call(
             (

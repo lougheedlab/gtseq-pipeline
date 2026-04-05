@@ -13,16 +13,18 @@ __all__ = ["fastq_split"]
 READ_INDEX_PATTERN = re.compile(r"^[ACGT]{6}\+[ACGT]{6}$")
 
 
-def fastq_split(samples: list[Sample], fastq_dir: Path) -> dict[int, Path]:
-    fq_path = next(fastq_dir.glob("Undetermined_*_R1_*.fastq.gz"), None)
-    assert fq_path is not None
+def fastq_split(samples: list[Sample], fastq_dir: Path, r1_r2: tuple[Path, Path] | None) -> dict[int, Path]:
+    if r1_r2 is None:
+        fq_path = next(fastq_dir.glob("Undetermined_*_R1_*.fastq.gz"), None)
+        assert fq_path is not None
+    else:
+        fq_path = r1_r2[0]
 
     split_dir = fastq_dir / "split"
     split_dir.mkdir(exist_ok=True)
 
     index_seqs_lookup: dict[str, int] = {
-        f"{get_i7_barcode(s.i7_name)}+{get_i5_barcode(s.i5_name)}": i
-        for i, s in enumerate(samples)
+        f"{get_i7_barcode(s.i7_name)}+{get_i5_barcode(s.i5_name)}": i for i, s in enumerate(samples)
     }
 
     logger.info(f"Using index lookup table for %d samples:", len(samples))

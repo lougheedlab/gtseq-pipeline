@@ -1,4 +1,5 @@
 from datetime import datetime
+from pathlib import Path
 
 from .logger import logger
 from .models import Params
@@ -21,17 +22,21 @@ def run_pipeline(params: Params):
     run_work_dir = params.work_dir / run_id
     run_work_dir.mkdir()
 
+    fastq_dir = run_work_dir / "fastq"
+    fastq_dir.mkdir()
+
     # 1. Load samples from sample sheet
     logger.info("Loading samples from sample sheet: %s", params.samples)
     samples = load_samples(params.samples)
 
-    # 2. Re-generate FASTQ using bcl2fastq so that we get index sequences in read names
-    logger.info("Generating FASTQ with bcl2fastq")
-    fastq_dir = fastq_generate(params, run_work_dir)
+    # 2. If R2 is not set: Re-generate FASTQ using bcl2fastq so that we get index sequences in read names
+    if isinstance(params.run, Path):
+        logger.info("Generating FASTQ with bcl2fastq")
+        fastq_dir = fastq_generate(params, fastq_dir)
 
     # 3. Split FASTQ by sample
     logger.info("Splitting FASTQ by sample")
-    sample_fastqs = fastq_split(samples, fastq_dir)
+    sample_fastqs = fastq_split(samples, fastq_dir, r1_r2=params.run if isinstance(params.run, tuple) else None)
 
     # 4. Download the reference genome, if needed
     ref_genome = download_genome_if_needed(params)

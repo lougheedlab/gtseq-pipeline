@@ -13,6 +13,7 @@ def cmd_pipeline(args):
     call_sex = not args.no_sex_calls
     gtseq_scripts_path: Path = args.gtseq_scripts
     sex_calls: Path | None = args.sex_calls
+    r2: Path | None = args.r2
 
     if call_sex:
         if sex_calls is None:
@@ -34,7 +35,7 @@ def cmd_pipeline(args):
     params = Params(
         species=args.species,
         work_dir=args.work_dir,
-        run=args.run,
+        run=args.run if r2 is None else (args.run, args.r2),
         samples=args.samples,
         call_sex=call_sex,
         gtseq_scripts=args.gtseq_scripts,
@@ -139,10 +140,15 @@ def main():
         help="Turns off the sex marker calling part of the pipeline.",
     )
     run_parser.add_argument("--processes", "-p", type=int, help="Number of processes to use.", default=4)
-    run_parser.add_argument("run", type=Path, help="Path to run input directory (from Illumina machine)")
+    run_parser.add_argument(
+        "run",
+        type=Path,
+        help="Path to run input directory (from Illumina machine) or R1 FASTQ file (if --r2 is passed as well.)",
+    )
     run_parser.add_argument("samples", type=Path, help="Path to sample sheet.")
     run_parser.add_argument("vcf", type=Path, help="VCF output file to generate.")
     run_parser.add_argument("--sex-calls", type=Path, help="Output file for sex calls CSV.")
+    run_parser.add_argument("--r2", type=Path, help="Path to R2 FASTQ file (if skipping bcl2fastq2 step.")
 
     run_parser.set_defaults(func=cmd_pipeline)
 

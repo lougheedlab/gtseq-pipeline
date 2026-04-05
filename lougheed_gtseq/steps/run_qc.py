@@ -12,7 +12,6 @@ from typing import Literal
 
 from ..logger import logger
 
-
 __all__ = ["run_qc"]
 
 sample_pattern = re.compile(r"GT[sS]eq_\d+_[A-Z\d]+_(PL|plate)_\d+_(?P<sample>[a-zA-Z0-9_\-#?]+)\..*\.bam")
