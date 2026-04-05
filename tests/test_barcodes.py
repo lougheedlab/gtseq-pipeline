@@ -20,16 +20,22 @@ def test_extract_i7_errs():
         get_i7_barcode("GTseq i7 10uM")  # no numeral
 
     with pytest.raises(ValueError):
-        get_i7_barcode("GTseq i7 005 10uM")  # numeral doesn't have an associated barcode
+        get_i7_barcode("GTseq i7 017 10uM")  # numeral doesn't have an associated barcode
 
 
 def test_normalize_i5():
     assert normalize_i5_coordinate("A01") == "A01"
     assert normalize_i5_coordinate("A1") == "A01"
     assert normalize_i5_coordinate("1A") == "A01"
+    assert normalize_i5_coordinate("10A") == "A10"
+    assert normalize_i5_coordinate("11A") == "A11"
+    assert normalize_i5_coordinate("10F") == "F10"
 
 
 def test_extract_i5():
     assert get_i5_barcode("A01") == I5_BARCODES["A01"]
     assert get_i5_barcode("A1") == I5_BARCODES["A01"]
     assert get_i5_barcode("1A") == I5_BARCODES["A01"]
+    assert get_i5_barcode("10A") == I5_BARCODES["A10"]
+    assert get_i5_barcode("11A") == I5_BARCODES["A11"]
+    assert get_i5_barcode("10F") == I5_BARCODES["F10"]

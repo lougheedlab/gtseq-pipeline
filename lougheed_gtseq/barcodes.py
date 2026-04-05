@@ -10,13 +10,24 @@ __all__ = [
     "get_i5_barcode",
 ]
 
+# "Barcode (on sample sheet)"
 I7_BARCODES = {
     "001": "ATCACG",
     "002": "CGATGT",
     "003": "TTAGGC",
     "004": "TGACCA",
+    "005": "ACAGTG",
     "006": "GCCAAT",
+    "007": "CAGATC",
+    "008": "ACTTGA",
+    "009": "GATCAG",
+    "010": "TAGCTT",
+    "011": "GGCTAC",
     "012": "CTTGTA",
+    "013": "GGATAA",
+    "014": "GAGCTG",
+    "015": "TACTGT",
+    "016": "GCCAGC",
 }
 
 
