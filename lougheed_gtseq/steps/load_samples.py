@@ -16,7 +16,10 @@ def load_samples(sample_csv: Path, logger: Logger) -> list[Sample]:
 
         row: dict[str, str]
         for ri, row in enumerate(reader):
-            norm_row = {k.lower().replace(" ", "_").strip(): v for k, v in row.items()}
+            # normalize keys + get rid of strange characters like zero-width spaces (which have somehow snuck in!)
+            norm_row = {
+                k.lower().replace(" ", "_").strip().encode("ascii", "ignore").decode("utf9"): v for k, v in row.items()
+            }
             try:
                 samples.append(
                     Sample(
@@ -33,5 +36,6 @@ def load_samples(sample_csv: Path, logger: Logger) -> list[Sample]:
                     ", ".join(norm_row.keys()),
                 )
                 traceback.print_exc()
+                exit(1)
 
     return samples
