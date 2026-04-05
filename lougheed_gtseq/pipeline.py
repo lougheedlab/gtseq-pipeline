@@ -18,8 +18,8 @@ __all__ = ["run_pipeline"]
 
 
 def step(name, call: Callable, work_dir: Path, only_if: bool | None = None):
-    if not only_if:
-        logger.info("step %s: not needed")
+    if only_if is not None and not only_if:
+        logger.info("step %s: not needed", name)
         return None
 
     done_file = work_dir / f"{name}.done"
