@@ -46,6 +46,7 @@ def cmd_pipeline(args):
         drop_failed_samples=args.drop_failed,
         vcf=args.vcf,
         sex_calls=args.sex_calls,
+        continue_run=args.continue_run,
         genomes=args.genomes,
         processes=args.processes,
     )

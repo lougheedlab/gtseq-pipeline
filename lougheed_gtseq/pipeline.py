@@ -35,8 +35,8 @@ def run_pipeline(params: Params):
     dt = datetime.now().isoformat().replace(":", "_").split(".")[0]
     run_id = f"run_{dt}"
 
-    if params.continue_dir:
-        run_work_dir = params.continue_dir
+    if params.continue_run:
+        run_work_dir = params.continue_run
     else:
         run_work_dir = params.work_dir / run_id
         run_work_dir.mkdir()

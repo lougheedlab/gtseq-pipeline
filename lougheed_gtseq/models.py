@@ -30,7 +30,7 @@ class Params(SexCallingParams):
     sex_calls: Path | None  # override to make optional
 
     # Continuation
-    continue_dir: Path | None
+    continue_run: Path | None
 
     # Other parameters
     genomes: Path | None
