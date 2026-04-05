@@ -146,6 +146,7 @@ def main():
         help="Location for shared reference genome resources. Downloaded genomes will be put here.",
     )
     run_parser.add_argument("--processes", "-p", type=int, help="Number of processes to use.", default=4)
+    run_parser.add_argument("--continue", type=Path, help="Continue/restart an existing run.")
     run_parser.add_argument(
         "run",
         type=Path,
@@ -179,6 +180,11 @@ def main():
     success_parser = subparsers.add_parser("snp-success", help="Calculate call success rates of SNPs in a VCF.")
     success_parser.add_argument("vcf", type=Path, help="The VCF to calculate SNP success rates for.")
     success_parser.set_defaults(func=cmd_snp_success)
+
+    # ------------------------------------------------------------------------------------------------------------------
+
+    het_parser = subparsers.add_parser("het", help="Calculate heterozygosity of a sample in a VCF.")
+    het_parser.add_argument("vcf", type=Path, help="The")
 
     # ------------------------------------------------------------------------------------------------------------------
 

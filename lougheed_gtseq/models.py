@@ -29,6 +29,9 @@ class Params(SexCallingParams):
     vcf: Path
     sex_calls: Path | None  # override to make optional
 
+    # Continuation
+    continue_dir: Path | None
+
     # Other parameters
     genomes: Path | None
     processes: int
