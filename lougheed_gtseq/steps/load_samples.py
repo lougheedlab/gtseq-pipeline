@@ -1,4 +1,5 @@
 import csv
+import re
 import traceback
 from logging import Logger
 from pathlib import Path
@@ -6,6 +7,10 @@ from pathlib import Path
 from lougheed_gtseq.models import Sample
 
 __all__ = ["load_samples"]
+
+
+RE_VARIABLE_SPACED_DASH = re.compile(r"\s*[-_]\s*")
+RE_MULTI_SPACE = re.compile(r"\s+")
 
 
 def load_samples(sample_csv: Path, logger: Logger) -> list[Sample]:
@@ -23,7 +28,9 @@ def load_samples(sample_csv: Path, logger: Logger) -> list[Sample]:
             try:
                 samples.append(
                     Sample(
-                        name=norm_row["sample_name"],
+                        name=RE_MULTI_SPACE.sub(
+                            RE_VARIABLE_SPACED_DASH.sub(norm_row["sample_name"].replace("/", "_"), "-"), " "
+                        ),
                         plate=norm_row["plate_id"],
                         i7_name=norm_row["i7_name"],
                         i5_name=norm_row["i5_name"],
