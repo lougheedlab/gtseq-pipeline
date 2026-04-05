@@ -147,7 +147,7 @@ def main():
         help="Location for shared reference genome resources. Downloaded genomes will be put here.",
     )
     run_parser.add_argument("--processes", "-p", type=int, help="Number of processes to use.", default=4)
-    run_parser.add_argument("--continue", type=Path, help="Continue/restart an existing run.")
+    run_parser.add_argument("--continue-run", type=Path, help="Continue/restart an existing run.")
     run_parser.add_argument(
         "run",
         type=Path,
