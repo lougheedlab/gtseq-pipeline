@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lougheed-gtseq"
-version = "0.1.0"
+version = "0.2.0"
 description = "GTseq pipeline for the Lougheed Lab."
 authors = ["David Lougheed <david.lougheed@gmail.com>"]
 license = "GPL-3.0-only"
