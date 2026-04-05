@@ -1,0 +1,21 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        name: Set up Python
+        with:
+          python-version: 3.10
+      - name: Install dependencies
+        run: pip install poetry && poetry install
+      - name: Test
+        run: poetry run pytest -svv
