@@ -18,7 +18,7 @@ def load_samples(sample_csv: Path, logger: Logger) -> list[Sample]:
         for ri, row in enumerate(reader):
             # normalize keys + get rid of strange characters like zero-width spaces (which have somehow snuck in!)
             norm_row = {
-                k.lower().replace(" ", "_").strip().encode("ascii", "ignore").decode("utf9"): v for k, v in row.items()
+                k.lower().replace(" ", "_").strip().encode("ascii", "ignore").decode("utf-8"): v for k, v in row.items()
             }
             try:
                 samples.append(
