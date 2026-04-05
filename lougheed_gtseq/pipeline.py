@@ -18,7 +18,7 @@ __all__ = ["run_pipeline"]
 
 
 def step(name, call: Callable, work_dir: Path, only_if: bool | None = None):
-    if only_if:
+    if not only_if:
         logger.info("step %s: not needed")
         return None
 
