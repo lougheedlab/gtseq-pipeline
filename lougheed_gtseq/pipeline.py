@@ -17,7 +17,11 @@ from .steps.call_sex_markers import call_sex_markers
 __all__ = ["run_pipeline"]
 
 
-def step(name, call: Callable, work_dir: Path):
+def step(name, call: Callable, work_dir: Path, only_if: bool | None = None):
+    if only_if:
+        logger.info("step %s: not needed")
+        return None
+
     done_file = work_dir / f"{name}.done"
     if done_file.exists():
         logger.info("step %s: already done", name)
@@ -49,7 +53,9 @@ def run_pipeline(params: Params):
     samples = load_samples(params.samples, logger)
 
     # 2. If R2 is not set: Re-generate FASTQ using bcl2fastq so that we get index sequences in read names
-    step("fastq_generate", lambda: fastq_generate(params, fastq_dir), run_work_dir)
+    step(
+        "fastq_generate", lambda: fastq_generate(params, fastq_dir), run_work_dir, only_if=isinstance(params.run, Path)
+    )
 
     # 3. Split FASTQ by sample
     sample_fastqs = step(
