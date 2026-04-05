@@ -27,7 +27,7 @@ def download_genome_if_needed(params: Params) -> Path:
     if species not in REFERENCE_GENOME_URLS:
         raise ValueError(f"Invalid species: {species}")
 
-    genomes_folder = work_dir / "ref"
+    genomes_folder = params.genomes or work_dir / "ref"
     genomes_folder.mkdir(exist_ok=True)
 
     genome_file = genomes_folder / REFERENCE_GENOME_FILE_NAMES[species]

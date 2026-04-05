@@ -46,6 +46,7 @@ def cmd_pipeline(args):
         drop_failed_samples=args.drop_failed,
         vcf=args.vcf,
         sex_calls=args.sex_calls,
+        genomes=args.genomes,
         processes=args.processes,
     )
 
@@ -138,6 +139,11 @@ def main():
         "--no-sex-calls",
         action="store_true",
         help="Turns off the sex marker calling part of the pipeline.",
+    )
+    run_parser.add_argument(
+        "--genomes",
+        type=Path,
+        help="Location for shared reference genome resources. Downloaded genomes will be put here.",
     )
     run_parser.add_argument("--processes", "-p", type=int, help="Number of processes to use.", default=4)
     run_parser.add_argument(

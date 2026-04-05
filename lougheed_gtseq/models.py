@@ -30,6 +30,7 @@ class Params(SexCallingParams):
     sex_calls: Path | None  # override to make optional
 
     # Other parameters
+    genomes: Path | None
     processes: int
 
 
