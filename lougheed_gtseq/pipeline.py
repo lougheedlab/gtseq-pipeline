@@ -27,7 +27,7 @@ def run_pipeline(params: Params):
 
     # 1. Load samples from sample sheet
     logger.info("Loading samples from sample sheet: %s", params.samples)
-    samples = load_samples(params.samples)
+    samples = load_samples(params.samples, logger)
 
     # 2. If R2 is not set: Re-generate FASTQ using bcl2fastq so that we get index sequences in read names
     if isinstance(params.run, Path):
