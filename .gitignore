@@ -1,6 +1,10 @@
 .idea/
 .DS_Store
 __pycache__
+*.csv
 *.log
+*.png
 *.relatedness2
+*.xls
+*.xlsx
 *.vcf
