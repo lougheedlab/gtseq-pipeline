@@ -17,7 +17,7 @@ def call_alleles(
     assert allele_file.exists()
 
     genotypes_dir = run_work_dir / "genotypes"
-    genotypes_dir.mkdir()
+    genotypes_dir.mkdir(exist_ok=True)
 
     bam_list = genotypes_dir / "bams.txt"
 
