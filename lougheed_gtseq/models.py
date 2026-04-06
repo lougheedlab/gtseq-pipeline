@@ -46,4 +46,4 @@ class Sample(BaseModel):
     i5_name: str
 
     def full_name(self) -> str:
-        return f"{self.batch}_{self.name}"
+        return f"{self.batch}_{self.plate}_{self.name}"
