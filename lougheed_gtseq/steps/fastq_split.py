@@ -76,6 +76,6 @@ def fastq_split(
         logger.info(f"%s: %d --> %s", s.rjust(30), idx, samples[idx])
 
     sample_files_r1 = split_file(samples, index_seqs_lookup, fq_path_r1, split_dir)
-    sample_files_r2 = split_file(samples, index_seqs_lookup, fq_path_r1, split_dir)
+    sample_files_r2 = split_file(samples, index_seqs_lookup, fq_path_r2, split_dir)
 
     return sample_files_r1, sample_files_r2
