@@ -34,8 +34,7 @@ def load_samples(batch: str, sample_csv: Path, logger: Logger) -> list[Sample]:
                         name=RE_MULTI_SPACE.sub(
                             " ",
                             RE_VARIABLE_SPACED_DASH.sub(
-                                "-",
-                                RE_CHARS_TO_UNDERSCORE.sub("_", ascii_normalize(norm_row["sample_name"]))
+                                "-", RE_CHARS_TO_UNDERSCORE.sub("_", ascii_normalize(norm_row["sample_name"]))
                             ),
                         ),
                         plate=norm_row["plate_id"],
