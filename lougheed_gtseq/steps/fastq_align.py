@@ -9,7 +9,7 @@ from ..models import Params, Sample
 __all__ = ["fastq_align"]
 
 
-def align_fastq_to_bam(ref_genome: Path, fq: Path, sorted_bam: Path, processes: int):
+def align_sample_to_bam(ref_genome: Path, fq_r1: Path, fq_r2: Path, sorted_bam: Path, processes: int):
     align_p = subprocess.Popen(
         (
             "bwa",
@@ -17,7 +17,8 @@ def align_fastq_to_bam(ref_genome: Path, fq: Path, sorted_bam: Path, processes: 
             "-t",
             str(processes),
             str(ref_genome),
-            str(fq),
+            str(fq_r1),
+            str(fq_r2),
         ),
         stdout=subprocess.PIPE,
         stderr=subprocess.DEVNULL,
@@ -45,7 +46,8 @@ def fastq_align(
     params: Params,
     run_work_dir: Path,
     samples: list[Sample],
-    sample_files: dict[int, Path],
+    sample_files_r1: dict[int, Path],
+    sample_files_r2: dict[int, Path],
     ref_genome: Path,
 ) -> dict[int, Path]:
     align = run_work_dir / "align"
@@ -54,8 +56,10 @@ def fastq_align(
     sample_bams: dict[int, Path] = {}
 
     for si, sample in enumerate(samples):
-        fq = sample_files[si]
-        with pysam.FastxFile(str(fq)) as fqf:
+        fq_r1 = sample_files_r1[si]
+        fq_r2 = sample_files_r2[si]
+
+        with pysam.FastxFile(str(fq_r1)) as fqf:
             n_reads = sum(1 for _ in fqf)
 
         logger.info(f"Aligning %d reads for sample: %s", n_reads, sample)
@@ -65,7 +69,7 @@ def fastq_align(
         sorted_bam = align / f"GTSeq_{i7}_{i5}_{sample.plate}_{sample.name}.bam"
 
         # Run the alignment -> compress -> sort task
-        align_fastq_to_bam(ref_genome, fq, sorted_bam, params.processes)
+        align_sample_to_bam(ref_genome, fq_r1, fq_r2, sorted_bam, params.processes)
 
         sample_bams[si] = sorted_bam
 

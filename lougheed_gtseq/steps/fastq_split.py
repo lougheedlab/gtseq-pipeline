@@ -13,24 +13,9 @@ __all__ = ["fastq_split"]
 READ_INDEX_PATTERN = re.compile(r"^[ACGT]{6}\+[ACGT]{6}$")
 
 
-def fastq_split(samples: list[Sample], fastq_dir: Path, r1_r2: tuple[Path, Path] | None) -> dict[int, Path]:
-    if r1_r2 is None:
-        fq_path = next(fastq_dir.glob("Undetermined_*_R1_*.fastq.gz"), None)
-        assert fq_path is not None
-    else:
-        fq_path = r1_r2[0]
-
-    split_dir = fastq_dir / "split"
-    split_dir.mkdir(exist_ok=True)
-
-    index_seqs_lookup: dict[str, int] = {
-        f"{get_i7_barcode(s.i7_name)}+{get_i5_barcode(s.i5_name)}": i for i, s in enumerate(samples)
-    }
-
-    logger.info(f"Using index lookup table for %d samples:", len(samples))
-    for s, idx in index_seqs_lookup.items():
-        logger.info(f"%s: %d --> %s", s.rjust(30), idx, samples[idx])
-
+def split_file(
+    samples: list[Sample], index_seqs_lookup: dict[str, int], fq_path: Path, split_dir: Path
+) -> dict[int, Path]:
     sample_files: dict[int, Path] = {}
     sample_file_handles: dict[int, TextIO] = {}
 
@@ -61,9 +46,36 @@ def fastq_split(samples: list[Sample], fastq_dir: Path, r1_r2: tuple[Path, Path]
 
                 fh = sample_file_handles[si]
                 fh.write(str(read) + "\n")
-
     finally:
         for v in sample_file_handles.values():
             v.close()
 
     return sample_files
+
+
+def fastq_split(
+    samples: list[Sample], fastq_dir: Path, r1_r2: tuple[Path, Path] | None
+) -> tuple[dict[int, Path], dict[int, Path]]:
+    if r1_r2 is None:
+        fq_path_r1 = next(fastq_dir.glob("Undetermined_*_R1_*.fastq.gz"), None)
+        assert fq_path_r1 is not None
+        fq_path_r2 = next(fastq_dir.glob("Undetermined_*_R2_*.fastq.gz"), None)
+        assert fq_path_r2 is not None
+    else:
+        fq_path_r1, fq_path_r2 = r1_r2
+
+    split_dir = fastq_dir / "split"
+    split_dir.mkdir(exist_ok=True)
+
+    index_seqs_lookup: dict[str, int] = {
+        f"{get_i7_barcode(s.i7_name)}+{get_i5_barcode(s.i5_name)}": i for i, s in enumerate(samples)
+    }
+
+    logger.info(f"Using index lookup table for %d samples:", len(samples))
+    for s, idx in index_seqs_lookup.items():
+        logger.info(f"%s: %d --> %s", s.rjust(30), idx, samples[idx])
+
+    sample_files_r1 = split_file(samples, index_seqs_lookup, fq_path_r1, split_dir)
+    sample_files_r2 = split_file(samples, index_seqs_lookup, fq_path_r1, split_dir)
+
+    return sample_files_r1, sample_files_r2

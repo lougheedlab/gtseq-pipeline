@@ -58,7 +58,7 @@ def run_pipeline(params: Params):
     )
 
     # 3. Split FASTQ by sample
-    sample_fastqs = step(
+    sample_fastqs_r1, sample_fastqs_r2 = step(
         "fastq_split",
         lambda: fastq_split(samples, fastq_dir, r1_r2=params.run if isinstance(params.run, tuple) else None),
         run_work_dir,
@@ -69,7 +69,9 @@ def run_pipeline(params: Params):
 
     # 5. Align sample FASTQs to the reference genome
     sample_bams = step(
-        "fastq_align", lambda: fastq_align(params, run_work_dir, samples, sample_fastqs, ref_genome), run_work_dir
+        "fastq_align",
+        lambda: fastq_align(params, run_work_dir, samples, sample_fastqs_r1, sample_fastqs_r2, ref_genome),
+        run_work_dir,
     )
 
     # 6. Call alleles for the species panel and generate a VCF
@@ -94,4 +96,4 @@ def run_pipeline(params: Params):
     # 8. (Optional) call sex-linked markers
     if params.call_sex:
         logger.info("Calling sex-linked markers and generating CSV: %s", params.sex_calls)
-        call_sex_markers(params, run_work_dir, samples, sample_fastqs)
+        call_sex_markers(params, run_work_dir, samples, sample_fastqs_r1)  # TODO: what to do about R2 here?
