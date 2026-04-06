@@ -10,11 +10,14 @@ from ..utils import ascii_normalize
 __all__ = ["load_samples"]
 
 
-RE_VARIABLE_SPACED_DASH = re.compile(r"\s*[-_]\s*")
+RE_VARIABLE_SPACED_DASH = re.compile(r"\s*[-–—_]\s*")  # normal dash, en-dash, em-dash, underscore
 RE_MULTI_SPACE = re.compile(r"\s+")
+RE_CHARS_TO_UNDERSCORE = re.compile(r"[/,]+")
 
 
-def load_samples(sample_csv: Path, logger: Logger) -> list[Sample]:
+def load_samples(batch: str, sample_csv: Path, logger: Logger) -> list[Sample]:
+    logger.info("Loading samples for batch %s from sample sheet: %s", batch, sample_csv)
+
     samples: list[Sample] = []
 
     with open(sample_csv) as fh:
@@ -27,11 +30,12 @@ def load_samples(sample_csv: Path, logger: Logger) -> list[Sample]:
             try:
                 samples.append(
                     Sample(
+                        batch=batch,
                         name=RE_MULTI_SPACE.sub(
                             " ",
                             RE_VARIABLE_SPACED_DASH.sub(
                                 "-",
-                                ascii_normalize(norm_row["sample_name"]).replace("/", "_"),
+                                RE_CHARS_TO_UNDERSCORE.sub("_", ascii_normalize(norm_row["sample_name"]))
                             ),
                         ),
                         plate=norm_row["plate_id"],

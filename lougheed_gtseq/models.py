@@ -38,7 +38,11 @@ class Params(SexCallingParams):
 
 
 class Sample(BaseModel):
+    batch: str
     name: str
     plate: str
     i7_name: str
     i5_name: str
+
+    def full_name(self) -> str:
+        return f"{self.batch}_{self.name}"

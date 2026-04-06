@@ -59,6 +59,7 @@ TODO
 
 ```bash
 lougheed-gtseq run --species polar --processes 10 --sex-calls APR2025.SexMarkers.genotypes_SNP.csv \
+  APR2025 \
   250428_M04106_0147_000000000-M245M \
   APR2025_barcode.csv \
   APR2025.vcf
@@ -69,13 +70,17 @@ lougheed-gtseq run --species polar --processes 10 --sex-calls APR2025.SexMarkers
 ```bash
 lougheed-gtseq run --species polar --processes 10 --sex-calls JUN2022.SexMarkers.genotypes_SNP.csv \
   --gtseq-scripts ~/bearwatch/GTseq-Pipeline \
+  JUN2022 \
   JUN2022_L001_R1_001.fastq \
   --r2 JUN2022_L001_R2_001.fastq \
   JUN2022_barcode.csv \
   JUN2022.vcf
 ```
 
-### TODO
+
+## Output
+
+TODO
 
 
 ## Copyright Notice

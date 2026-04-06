@@ -11,6 +11,7 @@ from .steps.fastq_generate import fastq_generate
 from .steps.fastq_split import fastq_split
 from .steps.fastq_align import fastq_align
 from .steps.call_alleles import call_alleles
+from .steps.reheader import reheader_vcf
 from .steps.run_qc import run_qc
 from .steps.call_sex_markers import call_sex_markers
 
@@ -49,7 +50,6 @@ def run_pipeline(params: Params):
     fastq_dir.mkdir(exist_ok=True)
 
     # 1. Load samples from sample sheet
-    logger.info("Loading samples from sample sheet: %s", params.samples)
     samples = load_samples(params.samples, logger)
 
     # 2. If R2 is not set: Re-generate FASTQ using bcl2fastq so that we get index sequences in read names
@@ -77,7 +77,10 @@ def run_pipeline(params: Params):
     # 6. Call alleles for the species panel and generate a VCF
     step("call_alleles", lambda: call_alleles(params, run_work_dir, sample_bams, ref_genome), run_work_dir)
 
-    # 7. Run quality control steps on the VCF and generate a second, derived, quality-controlled VCF
+    # 7. Re-header the VCF to normalize/standardize sample names
+    step("reheader_vcf", lambda: reheader_vcf(samples, params.vcf, logger), run_work_dir)
+
+    # 8. Run quality control steps on the VCF and generate a second, derived, quality-controlled VCF
     step(
         "run_qc",
         lambda: run_qc(
@@ -93,7 +96,7 @@ def run_pipeline(params: Params):
         run_work_dir,
     )
 
-    # 8. (Optional) call sex-linked markers
+    # 9. (Optional) call sex-linked markers
     if params.call_sex:
         logger.info("Calling sex-linked markers and generating CSV: %s", params.sex_calls)
         call_sex_markers(params, run_work_dir, samples, sample_fastqs_r1)  # TODO: what to do about R2 here?

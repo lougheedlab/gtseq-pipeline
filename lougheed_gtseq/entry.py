@@ -3,13 +3,11 @@ import sys
 
 from pathlib import Path
 
-from .models import Params
-from .pipeline import run_pipeline
-from .steps.run_qc import run_qc
-from .snp_success import run_snp_success
-
 
 def cmd_pipeline(args):
+    from .models import Params
+    from .pipeline import run_pipeline
+
     call_sex = not args.no_sex_calls
     gtseq_scripts_path: Path = args.gtseq_scripts
     sex_calls: Path | None = args.sex_calls
@@ -55,6 +53,8 @@ def cmd_pipeline(args):
 
 
 def cmd_qc(args):
+    from .steps.run_qc import run_qc
+
     run_qc(
         Path.cwd(),
         args.vcf_in,
@@ -68,7 +68,16 @@ def cmd_qc(args):
 
 
 def cmd_snp_success(args):
+    from .snp_success import run_snp_success
+
     run_snp_success(args.vcf)
+
+
+def cmd_reheader(args):
+    from .logger import logger
+    from .steps.reheader import run_reheader
+
+    run_reheader(args, logger)
 
 
 QC_DEFAULT_MIN_DP: int = 6
@@ -153,6 +162,7 @@ def main():
         type=Path,
         help="Path to run input directory (from Illumina machine) or R1 FASTQ file (if --r2 is passed as well.)",
     )
+    run_parser.add_argument("batch", type=str, help="Batch ID (e.g., APR2025).")
     run_parser.add_argument("samples", type=Path, help="Path to sample sheet.")
     run_parser.add_argument("vcf", type=Path, help="VCF output file to generate.")
     run_parser.add_argument("--sex-calls", type=Path, help="Output file for sex calls CSV.")
@@ -175,6 +185,14 @@ def main():
     )
     _add_qc_args(qc_parser)
     qc_parser.set_defaults(func=cmd_qc)
+
+    # ------------------------------------------------------------------------------------------------------------------
+
+    reheader_parser = subparsers.add_parser("reheader", help="Reheader VCF with normalized sample names.")
+    reheader_parser.add_argument("batch", type=str, help="Batch ID (e.g., APR2025).")
+    reheader_parser.add_argument("samples", type=Path, help="Path to sample sheet.")
+    reheader_parser.add_argument("vcf", type=Path, help="The VCF to reheader.")
+    reheader_parser.set_defaults(func=cmd_reheader)
 
     # ------------------------------------------------------------------------------------------------------------------
 
