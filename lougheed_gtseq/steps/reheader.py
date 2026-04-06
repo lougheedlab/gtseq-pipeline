@@ -30,16 +30,16 @@ def reheader_vcf(samples: list[Sample], vcf: Path, logger: Logger):
             logger.critical("sample count mismatch between sample CSV (n=%d) and VCF (n=%d)", n_samples, n_vcf)
             exit(1)
 
-    # vcf_path_reheader = Path(vcf_path_str + ".reheader")
-    #
-    # with open(vcf_path_reheader, "w") as fh:
-    #     for s in samples:
-    #         fh.write(f"{s.full_name()}\n")
-    #
+    vcf_path_reheader = Path(vcf_path_str + ".reheader")
 
-    subprocess.check_call(
-        ("bcftools", "reheader", "--samples-list", ",".join(s.full_name() for s in samples), vcf_path_str)
-    )
+    with open(vcf_path_reheader, "w") as fh:
+        for s in samples:
+            fh.write(f"{s.full_name()}\n")
+
+    try:
+        subprocess.check_call(("bcftools", "reheader", "--samples", str(vcf_path_reheader), vcf_path_str))
+    finally:
+        vcf_path_reheader.unlink()
 
 
 def run_reheader(params, logger: Logger):
