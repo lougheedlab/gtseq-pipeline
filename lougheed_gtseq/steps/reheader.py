@@ -37,14 +37,12 @@ def reheader_vcf(samples: list[Sample], vcf: Path, logger: Logger):
             fh.write(f"{s.full_name()}\n")
 
     try:
-        vcf_new = str(vcf) + ".new"
+        vcf_new = Path(str(vcf) + ".new")
         with open(vcf_new, "w") as fh:
             p = subprocess.Popen(("bcftools", "reheader", "--samples", str(vcf_path_reheader), vcf_str), stdout=fh)
             p.wait()
-        # vcf.unlink()
-        vcf_pre_reheader = Path(vcf_str + ".pre-reheader")
-        vcf.rename(vcf_pre_reheader)
-        # Path(vcf_path_new).rename(vcf)
+        vcf.rename(Path(vcf_str + ".pre-reheader"))
+        vcf_new.rename(vcf)
     finally:
         vcf_path_reheader.unlink()
 
