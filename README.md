@@ -15,7 +15,7 @@ This software must be run on a machine running Linux.
 
 1. Install/load [`bcl2fastq2`](https://support.illumina.com/downloads/bcl2fastq-conversion-software-v2-20.html) 
    if needed.
-2. Install/load [`bcftools`](https://samtools.github.io/bcftools/bcftools.html) if needed.
+2. Install/load [`bcftools`](https://samtools.github.io/bcftools/bcftools.html).
 3. Install the Lougheed Lab GTseq pipeline via `pip`:  `pip install lougheed_gtseq`
 4. TODO
 
@@ -24,11 +24,15 @@ This software must be run on a machine running Linux.
 
 ### 1. Install dependencies
 
-#### a. Install [`bcl2fastq2`](https://support.illumina.com/downloads/bcl2fastq-conversion-software-v2-20.html)
+#### a. Install Python and Perl
+
+Specifically, this pipeline has been tested with Python 3.10 and Perl 5.34.
+
+#### b. Install [`bcl2fastq2`](https://support.illumina.com/downloads/bcl2fastq-conversion-software-v2-20.html)
 
 Follow the instructions on the linked page to install `bcl2fastq2`.
 
-#### b. Obtain the GTSeq-Scripts pipeline (Nate Campbell)
+#### c. Obtain the GTSeq-Scripts pipeline (Nate Campbell)
 
 Put this somewhere in a re-usable location (outside the current batch folder):
 
