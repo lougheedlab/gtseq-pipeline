@@ -50,7 +50,7 @@ def run_pipeline(params: Params):
     fastq_dir.mkdir(exist_ok=True)
 
     # 1. Load samples from sample sheet
-    samples = load_samples(params.samples, logger)
+    samples = load_samples(params.batch, params.samples, logger)
 
     # 2. If R2 is not set: Re-generate FASTQ using bcl2fastq so that we get index sequences in read names
     step(
