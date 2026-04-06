@@ -23,28 +23,29 @@ def reheader_vcf(samples: list[Sample], vcf: Path, logger: Logger):
     :return:
     """
 
-    vcf_path_str = str(vcf)
+    vcf_str = str(vcf)
 
-    with VariantFile(vcf_path_str, "r") as vf:
+    with VariantFile(vcf_str, "r") as vf:
         if (n_samples := len(samples)) != (n_vcf := len(vf.header.samples)):
             logger.critical("sample count mismatch between sample CSV (n=%d) and VCF (n=%d)", n_samples, n_vcf)
             exit(1)
 
-    vcf_path_reheader = Path(vcf_path_str + ".reheader")
+    vcf_path_reheader = Path(vcf_str + ".reheader")  # text file with sample names for re-headering
 
     with open(vcf_path_reheader, "w") as fh:
         for s in samples:
             fh.write(f"{s.full_name()}\n")
 
     try:
-        vcf_path_new = str(vcf) + ".new"
-        with open(vcf_path_new, "w") as fh:
-            subprocess.Popen(("bcftools", "reheader", "--samples", str(vcf_path_reheader), vcf_path_str), stdout=fh)
+        vcf_new = str(vcf) + ".new"
+        with open(vcf_new, "w") as fh:
+            subprocess.Popen(("bcftools", "reheader", "--samples", str(vcf_path_reheader), vcf_str), stdout=fh)
         # vcf.unlink()
+        vcf_pre_reheader = Path(vcf_str + ".pre-reheader")
+        vcf.rename(vcf_pre_reheader)
         # Path(vcf_path_new).rename(vcf)
     finally:
-        pass
-        # vcf_path_reheader.unlink()
+        vcf_path_reheader.unlink()
 
 
 def run_reheader(params, logger: Logger):
