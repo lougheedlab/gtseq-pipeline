@@ -4,7 +4,8 @@ import traceback
 from logging import Logger
 from pathlib import Path
 
-from lougheed_gtseq.models import Sample
+from ..models import Sample
+from ..utils import ascii_normalize
 
 __all__ = ["load_samples"]
 
@@ -22,14 +23,16 @@ def load_samples(sample_csv: Path, logger: Logger) -> list[Sample]:
         row: dict[str, str]
         for ri, row in enumerate(reader):
             # normalize keys + get rid of strange characters like zero-width spaces (which have somehow snuck in!)
-            norm_row = {
-                k.lower().replace(" ", "_").strip().encode("ascii", "ignore").decode("utf-8"): v for k, v in row.items()
-            }
+            norm_row = {ascii_normalize(k.lower().replace(" ", "_").strip()): v for k, v in row.items()}
             try:
                 samples.append(
                     Sample(
                         name=RE_MULTI_SPACE.sub(
-                            RE_VARIABLE_SPACED_DASH.sub(norm_row["sample_name"].replace("/", "_"), "-"), " "
+                            " ",
+                            RE_VARIABLE_SPACED_DASH.sub(
+                                "-",
+                                ascii_normalize(norm_row["sample_name"]).replace("/", "_"),
+                            ),
                         ),
                         plate=norm_row["plate_id"],
                         i7_name=norm_row["i7_name"],
