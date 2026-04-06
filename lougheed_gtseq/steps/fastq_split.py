@@ -14,7 +14,7 @@ READ_INDEX_PATTERN = re.compile(r"^[ACGT]{6}\+[ACGT]{6}$")
 
 
 def split_file(
-    samples: list[Sample], index_seqs_lookup: dict[str, int], fq_path: Path, split_dir: Path
+    samples: list[Sample], index_seqs_lookup: dict[str, int], fq_path: Path, split_dir: Path, suffix: str
 ) -> dict[int, Path]:
     sample_files: dict[int, Path] = {}
     sample_file_handles: dict[int, TextIO] = {}
@@ -40,7 +40,7 @@ def split_file(
                 if si not in sample_files:
                     i7 = get_i7_barcode_numeral(s.i7_name)
                     i5 = normalize_i5_coordinate(s.i5_name)
-                    new_sample_file = split_dir / f"GTSeq_{i7}_{i5}_{s.plate}_{s.name}.fastq"
+                    new_sample_file = split_dir / f"GTSeq_{i7}_{i5}_{s.plate}_{s.name}_{suffix}.fastq"
                     sample_files[si] = new_sample_file
                     sample_file_handles[si] = open(new_sample_file, mode="w")
 
@@ -75,7 +75,7 @@ def fastq_split(
     for s, idx in index_seqs_lookup.items():
         logger.info(f"%s: %d --> %s", s.rjust(30), idx, samples[idx])
 
-    sample_files_r1 = split_file(samples, index_seqs_lookup, fq_path_r1, split_dir)
-    sample_files_r2 = split_file(samples, index_seqs_lookup, fq_path_r2, split_dir)
+    sample_files_r1 = split_file(samples, index_seqs_lookup, fq_path_r1, split_dir, "R1")
+    sample_files_r2 = split_file(samples, index_seqs_lookup, fq_path_r2, split_dir, "R2")
 
     return sample_files_r1, sample_files_r2
