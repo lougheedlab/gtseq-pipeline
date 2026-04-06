@@ -15,6 +15,7 @@ class Params(SexCallingParams):
     # Required input information
     species: str
     work_dir: Path
+    batch: str
     run: Path | tuple[Path, Path]  # Illumina machine output directory or tuple of (R1 fastq, R2 fastq)
     samples: Path
 

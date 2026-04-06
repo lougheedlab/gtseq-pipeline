@@ -33,6 +33,7 @@ def cmd_pipeline(args):
     params = Params(
         species=args.species,
         work_dir=args.work_dir,
+        batch=args.batch,
         run=args.run if r2 is None else (args.run, args.r2),
         samples=args.samples,
         call_sex=call_sex,
