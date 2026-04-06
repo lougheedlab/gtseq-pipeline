@@ -25,7 +25,7 @@ def reheader_vcf(samples: list[Sample], vcf: Path, logger: Logger):
 
     vcf_path_str = str(vcf)
 
-    with VariantFile(vcf_path_str) as vf:
+    with VariantFile(vcf_path_str, "r") as vf:
         if (n_samples := len(samples)) != (n_vcf := len(vf.header.samples)):
             logger.critical("sample count mismatch between sample CSV (n=%d) and VCF (n=%d)", n_samples, n_vcf)
             exit(1)
