@@ -158,12 +158,12 @@ def main():
     )
     run_parser.add_argument("--processes", "-p", type=int, help="Number of processes to use.", default=4)
     run_parser.add_argument("--continue-run", type=Path, help="Continue/restart an existing run.")
+    run_parser.add_argument("batch", type=str, help="Batch ID (e.g., APR2025).")
     run_parser.add_argument(
         "run",
         type=Path,
         help="Path to run input directory (from Illumina machine) or R1 FASTQ file (if --r2 is passed as well.)",
     )
-    run_parser.add_argument("batch", type=str, help="Batch ID (e.g., APR2025).")
     run_parser.add_argument("samples", type=Path, help="Path to sample sheet.")
     run_parser.add_argument("vcf", type=Path, help="VCF output file to generate.")
     run_parser.add_argument("--sex-calls", type=Path, help="Output file for sex calls CSV.")
