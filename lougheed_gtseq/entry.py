@@ -81,6 +81,12 @@ def cmd_reheader(args):
     run_reheader(args, logger)
 
 
+def cmd_combine_sex_markers(args):
+    from .combine_sex_markers import combine_sex_markers
+
+    combine_sex_markers(args.csv)
+
+
 QC_DEFAULT_MIN_DP: int = 6
 QC_DEFAULT_MIN_GQ: int = 18
 QC_DEFAULT_MIN_CALLED_PROP: float = 0.75
@@ -205,6 +211,12 @@ def main():
 
     het_parser = subparsers.add_parser("het", help="Calculate heterozygosity of a sample in a VCF.")
     het_parser.add_argument("vcf", type=Path, help="The")
+
+    # ------------------------------------------------------------------------------------------------------------------
+
+    combine_sex_parser = subparsers.add_parser("combine-sex-markers", help="Combine sex markers from multiple batches.")
+    combine_sex_parser.add_argument("csv", type=Path, nargs="+", help="Path(s) to CSV sex marker call files.")
+    combine_sex_parser.set_defaults(func=cmd_combine_sex_markers)
 
     # ------------------------------------------------------------------------------------------------------------------
 
