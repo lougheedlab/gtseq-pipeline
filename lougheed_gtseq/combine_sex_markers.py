@@ -23,4 +23,5 @@ def combine_sex_markers(files: list[Path]):
     records.sort(key=lambda r: r["Sample"])
 
     writer = DictWriter(sys.stdout, fieldnames=list(records[0].keys()))
+    writer.writeheader()
     writer.writerows(records)
