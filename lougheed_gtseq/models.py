@@ -1,5 +1,5 @@
 from pathlib import Path
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 __all__ = ["SexCallingParams", "Params", "Sample"]
 
@@ -39,11 +39,11 @@ class Params(SexCallingParams):
 
 
 class Sample(BaseModel):
+    sample_id: str
     batch: str
-    name: str
-    plate: str
-    i7_name: str
-    i5_name: str
+    plate: int = Field(..., gt=0, lt=12)
+    i7: int | None = Field(..., gt=0, lt=17)  # 001, 002, 003, ..., 016
+    i5: str | None = Field(..., pattern=r"^[A-H](0[0-9]|1[0-2])$")  # A01, ..., H12
 
     def full_name(self) -> str:
-        return f"{self.batch}_{self.plate}_{self.name}"
+        return f"{self.sample_id}_{self.batch}_plate_{self.plate}_{str(self.i7).zfill(3)}_{self.i5}"

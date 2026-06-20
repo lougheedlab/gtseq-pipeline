@@ -2,7 +2,6 @@ import pysam
 import subprocess
 from pathlib import Path
 
-from ..barcodes import get_i7_barcode_numeral, normalize_i5_coordinate
 from ..logger import logger
 from ..models import Params, Sample
 
@@ -64,9 +63,7 @@ def fastq_align(
 
         logger.info(f"Aligning %d reads for sample: %s", n_reads, sample)
 
-        i7 = get_i7_barcode_numeral(sample.i7_name)
-        i5 = normalize_i5_coordinate(sample.i5_name)
-        sorted_bam = align / f"GTSeq_{i7}_{i5}_{sample.plate}_{sample.name}.bam"
+        sorted_bam = align / f"GTSeq_{sample.full_name()}.bam"
 
         # Run the alignment -> compress -> sort task
         align_sample_to_bam(ref_genome, fq_r1, fq_r2, sorted_bam, params.processes)

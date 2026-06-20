@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 from typing import TextIO
 
-from ..barcodes import get_i7_barcode_numeral, get_i7_barcode, normalize_i5_coordinate, get_i5_barcode
+from ..barcodes import get_i7_barcode, get_i5_barcode
 from ..logger import logger
 from ..models import Sample
 
@@ -38,9 +38,7 @@ def split_file(
                 s = samples[si]
 
                 if si not in sample_files:
-                    i7 = get_i7_barcode_numeral(s.i7_name)
-                    i5 = normalize_i5_coordinate(s.i5_name)
-                    new_sample_file = split_dir / f"GTSeq_{i7}_{i5}_{s.plate}_{s.name}_{suffix}.fastq"
+                    new_sample_file = split_dir / f"GTSeq_{s.full_name()}_{suffix}.fastq"
                     sample_files[si] = new_sample_file
                     sample_file_handles[si] = open(new_sample_file, mode="w")
 
@@ -68,7 +66,7 @@ def fastq_split(
     split_dir.mkdir(exist_ok=True)
 
     index_seqs_lookup: dict[str, int] = {
-        f"{get_i7_barcode(s.i7_name)}+{get_i5_barcode(s.i5_name)}": i for i, s in enumerate(samples)
+        f"{get_i7_barcode(s.i7)}+{get_i5_barcode(s.i5)}": i for i, s in enumerate(samples)
     }
 
     logger.info(f"Using index lookup table for %d samples:", len(samples))

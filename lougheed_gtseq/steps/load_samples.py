@@ -4,6 +4,7 @@ import traceback
 from logging import Logger
 from pathlib import Path
 
+from ..barcodes import normalize_i5_coordinate
 from ..models import Sample
 from ..utils import ascii_normalize
 
@@ -13,6 +14,7 @@ __all__ = ["load_samples"]
 RE_VARIABLE_SPACED_DASH = re.compile(r"\s*[-–—_]\s*")  # normal dash, en-dash, em-dash, underscore
 RE_MULTI_SPACE = re.compile(r"\s+")
 RE_CHARS_TO_UNDERSCORE = re.compile(r"[/,]+")
+RE_PLATE = re.compile(r"^\s*(pl)?(ate)?_?([0-9]+)\s*$", flags=re.IGNORECASE)
 
 
 def load_samples(batch: str, sample_csv: Path, logger: Logger) -> list[Sample]:
@@ -31,15 +33,15 @@ def load_samples(batch: str, sample_csv: Path, logger: Logger) -> list[Sample]:
                 samples.append(
                     Sample(
                         batch=batch,
-                        name=RE_MULTI_SPACE.sub(
+                        sample_id=RE_MULTI_SPACE.sub(
                             " ",
                             RE_VARIABLE_SPACED_DASH.sub(
                                 "-", RE_CHARS_TO_UNDERSCORE.sub("_", ascii_normalize(norm_row["sample_name"]))
                             ),
                         ),
-                        plate=norm_row["plate_id"],
-                        i7_name=norm_row["i7_name"],
-                        i5_name=norm_row["i5_name"],
+                        plate=int(RE_PLATE.match(norm_row["plate_id"])[3]),
+                        i7=int(norm_row["i7_name"]),
+                        i5=normalize_i5_coordinate(norm_row["i5_name"]),
                     )
                 )
             except KeyError:

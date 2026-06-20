@@ -2,7 +2,6 @@ import pytest
 
 from lougheed_gtseq.barcodes import (
     I7_BARCODES,
-    get_i7_barcode_numeral,
     get_i7_barcode,
     I5_BARCODES,
     normalize_i5_coordinate,
@@ -11,16 +10,12 @@ from lougheed_gtseq.barcodes import (
 
 
 def test_extract_i7():
-    assert get_i7_barcode_numeral("GTseq i7 003 10uM") == "003"
-    assert get_i7_barcode("GTseq i7 003 10uM") == I7_BARCODES["003"]
+    assert get_i7_barcode(3) == I7_BARCODES[3]
 
 
-def test_extract_i7_errs():
+def test_extract_i7_err():
     with pytest.raises(ValueError):
-        get_i7_barcode("GTseq i7 10uM")  # no numeral
-
-    with pytest.raises(ValueError):
-        get_i7_barcode("GTseq i7 017 10uM")  # numeral doesn't have an associated barcode
+        get_i7_barcode(17)  # numeral doesn't have an associated barcode
 
 
 def test_normalize_i5():

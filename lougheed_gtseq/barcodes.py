@@ -12,39 +12,27 @@ __all__ = [
 
 # "Barcode (on sample sheet)"
 I7_BARCODES = {
-    "001": "ATCACG",
-    "002": "CGATGT",
-    "003": "TTAGGC",
-    "004": "TGACCA",
-    "005": "ACAGTG",
-    "006": "GCCAAT",
-    "007": "CAGATC",
-    "008": "ACTTGA",
-    "009": "GATCAG",
-    "010": "TAGCTT",
-    "011": "GGCTAC",
-    "012": "CTTGTA",
-    "013": "GGATAA",
-    "014": "GAGCTG",
-    "015": "TACTGT",
-    "016": "GCCAGC",
+    1: "ATCACG",
+    2: "CGATGT",
+    3: "TTAGGC",
+    4: "TGACCA",
+    5: "ACAGTG",
+    6: "GCCAAT",
+    7: "CAGATC",
+    8: "ACTTGA",
+    9: "GATCAG",
+    10: "TAGCTT",
+    11: "GGCTAC",
+    12: "CTTGTA",
+    13: "GGATAA",
+    14: "GAGCTG",
+    15: "TACTGT",
+    16: "GCCAGC",
 }
 
 
-i7_barcode_numeral_pattern = re.compile(r"(0[0-1][1-6])")
-
-
 @functools.cache
-def get_i7_barcode_numeral(val: str) -> str:
-    m = i7_barcode_numeral_pattern.search(val)
-    if not m:
-        raise ValueError(f"Could not extract i7 barcode numeral from value: '{val}'")
-    return m.group(1)
-
-
-@functools.cache
-def get_i7_barcode(val: str) -> str:
-    barcode_num = get_i7_barcode_numeral(val)
+def get_i7_barcode(barcode_num: int) -> str:
     if barcode_num not in I7_BARCODES:
         raise ValueError(f"Barcode with numeral {barcode_num} not found in set: {set(I7_BARCODES.keys())}")
     return I7_BARCODES[barcode_num]
