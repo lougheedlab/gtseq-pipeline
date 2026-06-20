@@ -4,7 +4,7 @@ import traceback
 from logging import Logger
 from pathlib import Path
 
-from ..barcodes import normalize_i5_coordinate
+from ..barcodes import get_i7_barcode_numeral, normalize_i5_coordinate
 from ..models import Sample
 from ..utils import ascii_normalize
 
@@ -40,7 +40,7 @@ def load_samples(batch: str, sample_csv: Path, logger: Logger) -> list[Sample]:
                             ),
                         ),
                         plate=int(RE_PLATE.match(norm_row["plate_id"])[3]),
-                        i7=int(norm_row["i7_name"]),
+                        i7=int(get_i7_barcode_numeral(norm_row["i7_name"])),
                         i5=normalize_i5_coordinate(norm_row["i5_name"]),
                     )
                 )

@@ -31,6 +31,17 @@ I7_BARCODES = {
 }
 
 
+i7_barcode_numeral_pattern = re.compile(r"(0[0-1][1-6])")
+
+
+@functools.cache
+def get_i7_barcode_numeral(val: str) -> str:
+    m = i7_barcode_numeral_pattern.search(val)
+    if not m:
+        raise ValueError(f"Could not extract i7 barcode numeral from value: '{val}'")
+    return m.group(1)
+
+
 @functools.cache
 def get_i7_barcode(barcode_num: int) -> str:
     if barcode_num not in I7_BARCODES:
