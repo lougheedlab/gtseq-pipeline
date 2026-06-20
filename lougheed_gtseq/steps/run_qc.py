@@ -122,6 +122,14 @@ def run_qc(
     # Calculate final set of successful samples:
     success_samples = [ss for ss in sample_genotypes.keys() if ss not in failed_samples]
 
+    # Save success samples to text file
+    with open(f"{vcf_out}.success-samples.csv", "w") as fh:
+        fh.write(f'"sample","proportion","heterozygosity"')
+        for ss in success_samples:
+            sp = sample_p_called[ss]
+            sh = sample_het[ss]
+            fh.write(f'"{ss}","{sp}","{sh}"\n')
+
     # Save failed samples to text file
     with open(f"{vcf_out}.failed-samples.csv", "w") as fh:
         fh.write(f'"sample","failure reason","failure value"\n')
