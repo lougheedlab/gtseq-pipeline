@@ -16,6 +16,7 @@ def combine_sex_markers(files: list[Path]):
         with open(file, "r") as fh:
             reader = DictReader(fh)
             for record in reader:
+                print(record)
                 if "" in record:
                     del record[""]
                 records.append(record)
