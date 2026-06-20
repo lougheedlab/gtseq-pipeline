@@ -15,7 +15,10 @@ def combine_sex_markers(files: list[Path]):
     for file in files:
         with open(file, "r") as fh:
             reader = DictReader(fh)
-            records.extend(reader)
+            for record in reader:
+                if "" in record:
+                    del record[""]
+                records.append(record)
 
     records.sort(key=lambda r: r["Sample"])
 
