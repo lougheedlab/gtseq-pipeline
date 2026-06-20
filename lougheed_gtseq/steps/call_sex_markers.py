@@ -39,7 +39,7 @@ def call_sex_markers(
     # For each sample, call sex-linked genotypes (Campbell et al. script)
     for si, fastq in sample_fastqs.items():
         sample = samples[si]
-        print(f"Calling sex-linked markers for {sample.name} ({fastq=})")
+        print(f"Calling sex-linked markers for {sample.sample_id} ({fastq=})")
         with open(genos_dir / f"{sample.full_name()}.genos", "w") as fh:
             subprocess.check_call(("perl", str(genotyper), str(marker_file), str(fastq)), stdout=fh)
         print("    Done.")
